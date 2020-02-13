@@ -15,7 +15,9 @@ Load and run the testsuite:
 
 Compute the second-order Birkhoff normal form of the hamiltonian
 
-\[ H={{B\,q^3}\over{3}}+{{q^2+p^2}\over{2}}. \]
+``` math
+H=B q³/3 + (q² + p²)/2.
+```
 
 ``` maxima
 (%i3) declare(B,constant) $
