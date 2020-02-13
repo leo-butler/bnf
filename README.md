@@ -39,7 +39,9 @@ i= 4
 
 Which gives
 
-\[ H_2 = I_{1}-{{5\,B^2\,I_{1}^2}\over{12}}, \]
+``` math
+H₂=I₁-5 B² I₁²/12 
+```
 
 and the remaining elements in the list `%o4` are
 
