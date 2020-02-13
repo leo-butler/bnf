@@ -45,9 +45,9 @@ H₂=I₁-5 B² I₁²/12
 
 and the remaining elements in the list `%o4` are
 
-  * $I_1$ is the quadratic part of $H$;
-  * a list of parameters used to solve for the generating function $φ$ and $H_2$;
-  * a check sum which should be $0$;
-  * $H_2$ in mixed variables;
-  * the generating function $φ$ of the transformation from $H$ to $H_2$.
+  * I₁ is the quadratic part of H;
+  * a list of parameters used to solve for the generating function φ and H₂;
+  * a check sum which should be 0;
+  * H₂ in mixed variables;
+  * the generating function φ of the transformation from H to H₂.
 
