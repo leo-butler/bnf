@@ -51,3 +51,6 @@ and the remaining elements in the list `%o4` are
   * H₂ in mixed variables;
   * the generating function φ of the transformation from H to H₂.
 
+
+For a longer set of examples, see the rtest_bnf.mac file.
+
