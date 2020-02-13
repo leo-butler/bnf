@@ -1,0 +1,49 @@
+/* -*- mode: maxima -*- */
+/*
+ * $Id:$
+ *
+ * Author: Leo Butler (leo.butler@umanitoba.ca)
+ *
+ * This file is Maxima code (http://maxima.sourceforge.net/)
+ * 
+ * It is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This software is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this file. If not, see http://www.gnu.org/licenses/. 
+ */
+
+maxima_tempdir : "/tmp";
+display2d : false $
+push("./$$$.mac",file_search_maxima);
+push("./$$$.lisp",file_search_lisp);
+
+load("unicodedata.mac")$
+unicode_init()$
+unicode_add(["greek","latin","combining","apl","superscript","subscript","vulgar fraction","coptic"])$
+unicode_add_category("Sm",true)$
+set_alpha_char("ϣ");
+
+makepfop(x,y) := (apply(kill,[x]), apply(postfix,[x,140,139,'any]), apply(define,[x(w),w^y]));
+map(lambda([a],apply(makepfop,a)),
+  [
+  ["⁹",9],
+  ["⁸",8],
+  ["⁷",7],
+  ["⁶",6],
+  ["⁵",5],
+  ["⁴",4],
+  ["³",3],
+  ["²",2],
+  ["¹",1],
+  ["⁰",0]]);
+
+
+/* end of maxima-init.mac<bnf> */

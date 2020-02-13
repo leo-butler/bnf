@@ -1,0 +1,341 @@
+/* -*- mode: maxima -*- */
+/*
+ * $Id:$
+ *
+ * Author: Leo Butler (leo.butler@umanitoba.ca)
+ *
+ * This file is Maxima code (http://maxima.sourceforge.net/)
+ * 
+ * It is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This software is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+ * License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this file. If not, see http://www.gnu.org/licenses/. 
+ */
+
+parameterp(ϣ);
+true;
+
+parameterp(ϣ[x*y]);
+true;
+
+monomialp(x+y,[x,y]);
+false;
+
+monomialp(x[2],[x[2],y]);
+true;
+
+monomialp(y^3,[x,y]);
+true;
+
+monomialp(x*y^3,[x,y]);
+true;
+
+monomialp(x[1]*y[0]^3,[x[1],y[0]]);
+true;
+
+monomialp(x*y^3,[x]);
+false;
+
+monomialp(5*x*y^3,[x,y]);
+true;
+
+monomialp(%pi*x*y^3,[x,y]);
+true;
+
+monomialp(y^x,[x,y]);
+false;
+
+monomialp(y^n,[x,y]);
+false;
+
+block([n], local(n), declare(n,constant), monomialp(y^n,[x,y]));
+true;
+
+rat_multi_exponent(x*y ²,[x,y]);
+[1,2];
+
+rat_multi_exponent(%pi*x*y ²,[x,y]);
+[1,2];
+
+errcatch(rat_multi_exponent(pi*x*y ²,[x,y]));
+[];
+
+listof(%pi*x*%e*5,constantp);
+[%e,%pi];
+
+listof(%pi*x*%e*5,lambda([t],not(constantp(t))));
+[x];
+
+listofparameters(%e*x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1);
+[ϣ[1,0], ϣ[1,2]];
+
+zero_by_p(parameterp, %e*x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1);
+1;
+
+block([%rnum_list:[%r1]], listofindeterminates(%pi+x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1 + %r1 + %pi*%r3));
+[%r3,x,y];
+
+monomials([],10);
+[1];
+
+monomials(x,2);
+[x^2];
+
+monomials([x],2);
+[x^2];
+
+monomials(x+y,5);
+[x^5,x^4*y,x^3*y^2,x^2*y^3,x*y^4,y^5];
+
+monomials([x,y],5);
+[x^5,x^4*y,x^3*y^2,x^2*y^3,x*y^4,y^5];
+
+block([%rnum_list:[%r1,%r2]], remove_rnums([%r1,%r3]));
+[0,%r3];
+
+homogeneous_polynomial([x,y],2);
+ϣ[0,2]*y^2+ϣ[1,1]*x*y+ϣ[2,0]*x^2;
+
+homogeneous_polynomial_to_list(ratexpand((x+y+z) ³),3);
+[1,3,3,1,3,6,3,3,3,1];
+
+homogeneous_polynomial_to_list((a-b)*x+y,1,[x,y]);
+[a-b,1];
+
+homogeneous_polynomial_to_list((a-b)*x+y,1,[x,y],true);
+[[a-b,x],[1,y]];
+
+homogeneous_polynomial_to_list(%pi+4,0);
+[%pi+4];
+
+homogeneous_polynomial_to_list(%pi+4,0,[x],true);
+[[%pi+4,1]];
+
+homogeneous_polynomial_to_list(%pi+4,0,[],true);
+[[%pi+4,1]];
+
+homogeneous_polynomial_to_list(0,3,[]);
+[0];
+
+homogeneous_polynomial_to_list(0,3,[],true);
+[[0,1]];
+
+polynomial_to_list(%e*x^2+(a-b)*x+y+c,2,[x,y]);
+[[%e,x^2],[0,x*y],[0,y^2],[a-b,x],[1,y],[c,1]];
+
+freeofl([u,X],[u]);
+false;
+
+freeofl([u,X],[x^3+y]);
+true;
+
+(ratweight(x,1,y,1,X,1,Y,1), 'done);
+'done;
+
+misolate(x,%e*x+5*x^2);
+5*%e^-1*x^2+x;
+
+misolate(x,x^3+5*x^2);
+x^3+5*x^2;
+
+iter_solve([y = x/3],[x],1);
+[x = 3*y];
+
+ratexpand(
+  iter_solve([y = ratexpand(taylor(log(1-x),x,0,4))],[x],4) -
+  [x = -(y^4+4*y^3+12*y^2+24*y)/24]); /* 1-x = e^y */
+[0=0];
+
+/* seed with penultimate substitution from last problem */
+ratexpand(
+  iter_solve([y = ratexpand(taylor(log(1-x),x,0,4))],[x],4,[x = (11*y^4-4*y^3+((-12*x^2)-12)*y^2-24*y)/24]) -
+  [x = -(y^4+4*y^3+12*y^2+24*y)/24]);
+[0=0];
+
+/* system */
+iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],1);
+[x = 3*X,y = -Y];
+
+iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3);
+[x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
+
+/* seed with penultimate substitution from last problem */
+iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3,[x = 18*Y*x^2-9*Y^2+3*X,y = x^2-Y]);
+[x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
+
+/* seed with solution from last problem */
+iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3, [x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2]);
+[x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
+
+kill(x,y,X,Y);
+'done;
+
+(declare([a,b,c],parameter), solve_for_parameters1((a ² - b)*x*y + c*x ² + (a+b-c)*y ², 2)), solve_for_parameters1_solve=solve;
+[[c = 0,a = 0,b = 0],[c = 0,a = -1,b = 1]];
+
+/* first output of genfun_transformation is Γ = d φ, which is not truncated;
+second output is the truncated, implicit symplectic map */
+genfun_transformation_explicit([x1,x2,X1,X2],[y1,y2,Y1,Y2],X1*y2+X2*y1,2);
+[[x1 = y2,x2 = y1,Y1 = X2,Y2 = X1],[y1 = x2,y2 = x1,Y1 = X2,Y2 = X1]];
+
+genfun_transformation_explicit([x1,x2,X1,X2],[y1,y2,Y1,Y2],X1*y2+X2*y1,-2);
+[[x1 = y2,x2 = y1,Y1 = X2,Y2 = X1],[y1 = x2,y2 = x1,Y1 = X2,Y2 = X1]];
+
+block([s,S,σ,Σ], ratweight(s,1,S,1,σ,1,Σ,1), genfun_transformation([σ,Σ],[s,S], s*Σ + s ²*Σ,1));
+[[σ = s^2+s,S = 2*s*Σ+Σ],[s = σ,Σ = S]];
+
+block([s,S,σ,Σ], ratweight(s,1,S,1,σ,1,Σ,1), genfun_transformation([σ,Σ],[s,S], s*Σ + s ²*Σ,2));
+[[σ = s^2+s,S = 2*s*Σ+Σ],[s = (-σ^2)+σ,Σ = S-2*σ*S]];
+
+/* harmonic oscillators */
+block([ratwtlvl,%rnum:0],
+  kill(s,S,σ,Σ,τ,f,g,a,d),
+  ratweight(s,1,S,1,σ,1,Σ,1), declare(a,parameter),
+  ratwtlvl:3,
+  φ: s*Σ + polynomial([s,Σ],3,ratwtlvl),
+  f:σ ² + Σ ²,
+  g:s ² + S ² + a*(s ² + S ²) ²,
+  subst(remove_rnums(bnf1([σ,Σ],[s,S],φ,f-g,ratwtlvl)),φ)
+  );
+s*Σ;
+
+block([ratwtlvl,%rnum:0],
+  kill(s,S,σ,Σ,τ,f,g,a,d),
+  ratweight(s,1,S,1,σ,1,Σ,1), declare(a,parameter),
+  ratwtlvl:4,
+  φ: s*Σ + polynomial([s,Σ],4,ratwtlvl),
+  f:σ ² + Σ ²,
+  g:s ² + S ² + a*(s ² + S ²) ²,
+  subst(remove_rnums(bnf1([σ,Σ],[s,S],φ,f-g,ratwtlvl)),φ)
+  );
+s*Σ;
+
+/* too long
+block([ratwtlvl:false,s],
+  kill(x,X,u,U,α,β,γ,δ,ε),
+  ratweight(x,1,X,1,u,1,U,1), declare([α,β,γ,δ,ε],parameter),
+  ratwtlvl:12,
+  φ: u*X + polynomial([u,X],3,ratwtlvl),
+  f: (x ² + X ²)/2,
+  g: psubst([x=u,X=U,B=0,G=0],f), g:g*(1 + g*(α + g*(β + g*(γ + g*(δ + g*ε))))),
+  s:remove_rnums(bnf2([x,X],[u,U],φ,f,g,ratwtlvl)),
+  subst(first(s),[α,β,γ,δ,ε])
+  );
+[0,0,0,0,0];
+*/
+
+/* harmonic oscillator */
+block([ratwtlvl:false],
+  kill(x,X,y,Y,σ,Σ,μ,Μ,φ,α),
+  declare([α],parameter),
+  ratweight(v,1,V,1,u,1,U,1,x,1,X,1,y,1,Y,1,σ,1,Σ,1,μ,1,Μ,1),
+  mtaylor(f,v,p,n) :> collecttermsl(ratexpand(taylor(f,v,p,n)),v),
+  φ:X*σ*cos(μ) + Y*σ*sin(μ),
+  τ:trigsimp(second(genfun_transformation_explicit([Σ,Μ,σ,μ],[X,Y,x,y],φ,-2))),
+  H:[x,y,X,Y].[x,y,X,Y]/2,
+  h:psubst(τ,H),
+  h:ratexpand(trigsimp(ratexpand(h))),
+  φ:sqrt((1-u)*Μ)*Σ + (1-Μ)*v,
+  τ1:second(genfun_transformation_explicit([U,V,u,v],[Σ,Μ,σ,μ],φ,-2)),
+  h1:lratsubst(τ1,h)-1,
+  ratwtlvl:8,
+  h1:mtaylor(h1,[u,U,V],[0,0,0],[ratwtlvl,ratwtlvl,ratwtlvl]),
+  g:ev(lratsubst(map(reverse,[X=U,x=u,Y=V,y=v]), h1), ratwtlvl=2),
+  φ:x*U + polynomial([x,U],3,ratwtlvl),
+  [h1,g]:subst([V=0,Y=0],[h1,g]),
+  s:first(bnf2([u,U],[x,X],φ,h1,g,ratwtlvl)),
+  last(verify_bnf([u,U],[x,X],φ,h1-g,s))
+  );
+0;
+
+
+/* from Ali & Wood, Prog. Theor. Phys., vol 78(4), Oct 1987 */
+(
+  hornerpoly(x,c,n) :> horner(sum(x^i*c[i],i,0,n),x),
+  ali_wood(r,[φ]) :=
+  block([ratwtlvl:false,α,x,X,u,U,B,G,f,%rnum:0],
+    local(x,X,u,U,B,G,α),
+    ratweight(x,1,X,1,u,1,U,1), declare([B,G],constant), declare([α],parameter),
+    α[0]: 0, α[1]: 1,
+    ratwtlvl:r,
+    φ:if φ=[] then u*X + polynomial([u,X],3,ratwtlvl) else first(φ) + polynomial([u,X],1+hipow(subst([X=u],first(φ)),u),ratwtlvl),
+    f: (x ² + X ²)/2 + B*x ³ + G*x ⁴/2,
+    g: psubst([x=u,X=U,B=0,G=0],f), g:hornerpoly(g,α,floor(ratwtlvl/2)),
+    s:bnf2([x,X],[u,U],φ,f,g,ratwtlvl),
+    subst(first(s),makelist(α[i],i,2,floor(ratwtlvl/2)))
+    ),
+  done) $
+done;
+
+/* Evaluation took 0.2160 seconds (0.2150 elapsed) using 45.629 MB. */
+ratexpand(
+  ali_wood(4) -
+  [(3*G - 15*B^2)/4]);
+[0];
+
+ratexpand(
+  ali_wood(6,last(s)) -
+  [(3*G-15*B^2)/4,-(17*G^2-450*B^2*G+705*B^4)/16]);
+[0,0];
+
+/* Evaluation took 881.6000 seconds (883.0860 elapsed) using 316998.049 MB. */
+/*
+ali_wood(16);
+[(3*G-15*B^2)/4,-(17*G^2-450*B^2*G+705*B^4)/16,
+(375*G^3-24945*B^2*G^2+116325*B^4*G-115755*B^6)/128,
+-(10689*G^4-1354500*B^2*G^3+12766950*B^4*G^2-32654916*B^6*G
+  +23968161*B^8)
+/1024,
+(87549*G^5-18237765*B^2*G^4+291251730*B^4*G^3-1375175802*B^6*G^2
+  +2424834657*B^8*G-1412410545*B^10)
+/2048,
+-(3132399*G^6-978378570*B^2*G^5+23869797345*B^4*G^4
+  -179422101324*B^6*G^3+556379422209*B^8*G^2
+  -748830783690*B^10*G+361809217935*B^12)
+/16384,
+(238225977*G^7-104743883475*B^2*G^6+3644984868525*B^4*G^5
+  -39986908838415*B^6*G^4+190295579741355*B^8*G^3
+  -437037206771385*B^10*G^2+475728673084335*B^12*G
+  -196443710834085*B^14)
+/262144];
+*/
+
+/* harmonic oscillators Hoover */
+block([ratwtlvl,%rnum:0],
+  kill(x,y,X,Y,a,φ),
+  ratweight(x,1,y,1,X,1,Y,1), declare(a,parameter),
+  ratwtlvl:3,
+  φ : X*y + polynomial([X,y],3,ratwtlvl),
+  H : y^2/2 + exp(-x) + x,
+  h : taylor(H,[x,y],[0,0],4)-1,
+  f : ev(ratexpand(h),ratwtlvl=2),
+  g : subst([x=X,y=Y], f+a*f^2),
+  bnf1([x,y],[X,Y],φ,g-h,ratwtlvl),
+  φ : subst(%%,φ)
+  );
+y^3/9+(X^2*y)/6+X*y;
+
+block([ratwtlvl,%rnum:0],
+  kill(x,y,X,Y,a),
+  ratweight(x,1,y,1,X,1,Y,1), declare(a,parameter),
+  ratwtlvl:4,
+  φ : φ + polynomial([X,y],4,ratwtlvl),
+  remove_rnums(bnf1([x,y],[X,Y],φ,g-h,ratwtlvl)),
+  subst(%%,[a,φ])
+  );
+[-1/24,(19*X*y^3)/288+y^3/9+(5*X^3*y)/288+(X^2*y)/6+X*y];
+
+(kill(x,y,X,Y,z,a,b,c,s,S,σ,Σ,φ,f,g));
+'done;
+
+
+
+/* end of rtest_bnf.mac */

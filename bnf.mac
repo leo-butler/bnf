@@ -1,0 +1,233 @@
+/* -*- mode: maxima -*- */
+/* Compute the Birkhoff Normal Form */
+/*
+* $Id:$
+*
+* Author: Leo Butler (leo.butler@umanitoba.ca)
+*
+* This file is Maxima code (http://maxima.sourceforge.net/)
+* 
+* It is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or (at your
+  * option) any later version.
+* 
+* This software is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+* License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this file. If not, see http://www.gnu.org/licenses/. 
+*/
+
+/* Requires: 
+             with_gensyms
+             https://github.com/leo-butler/with_gensyms.git
+*/
+             
+load(with_gensyms) $ wg_reversealias:false $
+load(lrats) $
+load(facexp) $
+
+/* Utilities */
+add_maxima_symbol('parameter);
+declare(parameter,feature)$
+parameterp(x) :> is((atom(x) and featurep(x,parameter)) or (subvarp(x) and featurep(op(x),parameter)))$
+
+monomialp(e,x) :> block([listconstvars:false, listdummyvars:true],
+  if every(lambda([t], member(t,x)),listofvars(e)) then
+    if mapatom(e) then true
+    else if op(e)="*" then is(monomialp(first(e),x) and monomialp(rest(e),x))
+    else if op(e)="^" then is(monomialp(first(e),x)) and freeofl([second(e)],x))$
+rat_multi_exponent(e,x) :> if monomialp(e,x) then map(lambda([t],hipow(e,t)),x) else error("rat_multi_exponent: expression must be a monomial.")$
+
+zero_by_p(p,e) :> block([ρ],
+  ρ:map(lambda([x], x=0),listof(e,p)),
+  lratsubst(ρ,e))$
+
+listof(e,p) :> block([listconstvars:true], sublist(listofvars(e),p)) $
+listofparameters(e) :> listof(e,parameterp) $
+listofindeterminates(e) :> listof(e,lambda([x], not(parameterp(x) or constantp(x) or member(x,%rnum_list)))) $
+
+monomials(v,n) :> block([vn,vl,v1],
+  if v=[] then return([1]),
+  if mapatom(v) then return([v^n]) else if length(v)=1 then return(v^n),
+  vp:subst("["="+",v), vl:subst("+"="[",v),
+  vn:subst("+"="[", ratexpand(vp^n)),
+  v1:psubst(map(lambda([x], x=1),vl),vn),
+  map("/",vn,v1));
+
+remove_rnums(e) :> zero_by_p(lambda([x],member(x,%rnum_list)),e) $
+
+add_maxima_symbol('ϣ)$
+declare(ϣ,[parameter,constant])$
+homogeneous_polynomial(x,n,[c]) :> block([m],
+  m:monomials(x,n),
+  c:if c=[] then map(lambda([χ], arraymake(ϣ,rat_multi_exponent(χ,x))), m) else if length(c)=1 then part(c,1) else c,
+  m.c) $
+polynomial(x,n,N) :> sum(homogeneous_polynomial(x,k), k, n, N)$
+
+homogeneous_polynomial_to_list(p,n,[x]) :> block([m,include_monomials,hcoef],
+  include_monomials:if length(x)<2 then false else second(x),
+  if include_monomials=true then hcoef:lambda([t], [ratcoef(p,t),t]) else hcoef:lambda([t], ratcoef(p,t)),
+  x:if x=[] or x=[[]] then listofindeterminates(p) else first(x),
+  if n=0 or x=[] then (
+    p:zero_by_p(lambda([v],member(v,x)),p),
+    if include_monomials then [[p,1]] else [p])
+  else (
+    m:monomials(x,n),
+    map(hcoef,m))) $
+polynomial_to_list(p,N,[x]) :> block([l,ratwtlvl],
+  l:[],
+  x:if x=[] or x=[[]] then listofindeterminates(p) else first(x),
+  if x=[] then N:0,
+  for n:N thru 0 step -1 do (
+    ratwtlvl:n,
+    p:collecttermsl(ratexpand(p),x),
+    l:append(l, homogeneous_polynomial_to_list(p,n,x,true))),
+  l)$
+
+/*
+e = c*s + higher terms in s + other terms
+return e/c if c#0 otherwise e
+*/
+misolate(s,e) :> block([r:ratwtlvl,ratwtlvl:1,c],
+  c:ratcoef(rat(e),s),
+  if c=0 then e else (ratwtlvl:r,ratexpand(e/c)))$
+
+/* σ = dφ_dΣ */
+genfun_transformation_scalar(s,σ,dφ_dΣ) :> block([imax,i,v,sub],
+  imax:ratwtlvl+1, i:0, v:s,
+  sub:misolate(s,- σ + dφ_dΣ),
+  while i<imax and not freeof(s,v) do (
+    i : i+1,
+    v : ratsubst(-sub + s, s, v)),
+  v)$
+
+freeofl(t,e) :> apply(freeof, append(t,[e])) $
+
+iter_solve(eqs,vars,ratwtlvl,[subs]) :> block([i,imax,e],
+  e:vars, eqs:subst("="="-",eqs),
+  imax:ratwtlvl*length(eqs)+1, i:0,
+  subs:if subs=[] then map("=",vars,-map(misolate,vars,eqs) + vars) else first(subs),
+  while i<imax and not(freeofl(vars,e)) do (i:i+1, e:lratsubst(subs,e)),
+  print("i=",i),
+  map("=",vars,e)) $  
+
+genfun_transformation(x,X,φ,ratwtlvl) :> block([n,α,Α,β,Β,γ,Γ,δ,dφ,s],
+  n:length(x)/2,
+  α:makelist(x[i],i,1,n),
+  Α:makelist(x[n+i],i,1,n),
+  β:makelist(X[i],i,1,n),
+  Β:makelist(X[n+i],i,1,n),
+  γ:append(Α,β),
+  Γ:append(α,Β),
+  δ:append(β,Α),
+  /* α = dφ_dΑ, Β = dφ_dβ or Γ = dφ */ 
+  dφ:mgrad(φ,γ),
+  s:[],
+  if ratwtlvl<0 then (ratwtlvl:-ratwtlvl, s:solve(dφ-Γ,δ)),
+  if s=[] then s:iter_solve(- Γ + dφ, δ, ratwtlvl) else s:first(s),
+  [map("=",Γ,dφ), s])$
+
+genfun_transformation_explicit(x,X,φ,ratwtlvl) :> block([imax,i,v,n,α,Α,β,Β,γ,Γ,δ,dφ,t,s,e,subs],
+  n:length(x)/2,
+  α:makelist(x[i],i,1,n),
+  Α:makelist(x[n+i],i,1,n),
+  β:makelist(X[i],i,1,n),
+  Β:makelist(X[n+i],i,1,n),
+  Γ:append(α,Β),
+  /* α = dφ_dΑ, Β = dφ_dβ or Γ = dφ */ 
+  γ:append(Α,β),
+  dφ:mgrad(φ,γ),
+  if ratwtlvl<0 or abs(ratwtlvl)=2 then (ratwtlvl:abs(ratwtlvl), s:solve(dφ-Γ,X)) else s:[],
+  if s=[] then s:iter_solve(- Γ + dφ, X, ratwtlvl) else s:first(s),
+  [map("=",Γ,dφ), s])$
+
+mgrad(f,v) :> map(lambda([t], diff(f,t)), v)$
+
+add_maxima_symbol('solve_for_parameters1_solve);
+solve_for_parameters1_solve:'linsolve;
+solve_for_parameters1(p,ratwtlvl) :> block([ρ,ε,ν],
+  ν:listofindeterminates(p),
+  ρ:listofparameters(p),
+  p:collecttermsl(ratexpand(p),ν),
+  ε:delete(0,map(first,polynomial_to_list(p,ratwtlvl,ν))),
+  ε:subst(map("=",ν,0*ν),ε),
+  apply(solve_for_parameters1_solve,[ε,ρ]))$
+
+bnf1(x,X,φ,f,r) :> block([ratwtlvl:abs(r),τ,v,fr],
+  φ:ratexpand(φ),
+  τ:second(genfun_transformation(x,X,φ,r)),
+  v:append(x,X),
+  τ:collecttermsl(ratexpand(τ),v),
+  f:collecttermsl(ratexpand(f),v),
+  fr:collecttermsl(ratexpand(lratsubst(τ,f)),v),
+  if fr=0 then linsolve(listofparameters(τ),listofparameters(τ)) else solve_for_parameters1(fr,ratwtlvl))$
+bnf2(x,X,φ,f,g,r) :> block([ratwtlvl:false,τ,s,v],
+  s:[], f:f-g,
+  for R:3 thru r do (
+    ratwtlvl:R,
+    s:remove_rnums(append(s,bnf1(x,X,φ,f,R))),
+    ratwtlvl:r,
+    [φ,f]:fullratsubst(s,[φ,f])),
+  τ:second(genfun_transformation(x,X,φ,r)),
+  [s, fullratsubst(τ,f), fullratsubst(τ,g), ratexpand(φ)])$
+
+verify_bnf(x,X,φ,f,s,[remove_params]) :> block([τ],
+  φ:lratsubst(s,φ),
+  φ:zero_by_p(subvarp,φ),
+  if remove_params#[] then φ:zero_by_p(parameterp,φ),
+  τ:subst(s, second(genfun_transformation(x,X,φ,ratwtlvl))),
+  f:lratsubst(τ,f),
+  [φ,τ,lratsubst(s,f)])$
+
+add_maxima_symbol('I)$
+hipowl(e) :> block([t], hipow(lratsubst(map(lambda([x],x=t),listofindeterminates(e)),e),t))$
+ezbnf_change_variables(x,f2) :> block([f2l,n,c,δ,s,r],
+  local(a,r), declare(a,parameter),
+  r(u,v,w) := if v#0 then 1 else (w/u)^(1/4),
+  n:length(x)/2,
+  c:flatten(makelist([a[i,1]=ratcoef(f2,x[i]^2), a[i,2]=ratcoef(f2,x[i]*x[i+n]), a[i,3]=ratcoef(f2,x[i+n]^2)], i,1,n)),
+  f2l:subst(c,makelist(a[i,1]*part(x,i)^2 + a[i,2]*part(x,i)*part(x,i+n)+a[i,3]*part(x,i+n)^2,i,1,n)),
+  s:makelist(part(x,i)=part(x,i)*r(c[3*i-2],c[3*i-1],c[3*i]), i,1,n),
+  s:append(s, makelist(part(x,i+n)=part(x,i+n)*r(c[3*i],c[3*i-1],c[3*i-2]), i,1,n)),
+  δ:makelist(determinant(hessian(part(f2l,i),listofindeterminates(part(f2l,i)))),i,1,n),
+  δ:map(sqrt, δ),
+  [f2l,δ]:lratsubst(c,[f2l,δ]),
+  /* return quadratic parts, frequencies and transformation of variables separately */
+  [f2l,δ,s]
+  );
+
+mratexpand(f,ratwtlvl) :> ratexpand(f);
+mratexpand(f,n) :> ev(ratexpand(f),ratwtlvl=n);
+ezbnf(x,f,ratwtlvl,[φ]) :> block([X,n,d,f2,f2l,F,c,I,s,u,Σ,g,g2,a,δ],
+  local(a), declare(a,parameter),
+  if not(listp(x)) then error("ezbnf(variables,expression,ratwtlvl,[genfun]): expected a variable list, got ~a.",x),
+  X:map(lambda([t],concat('%,t)),x),
+  apply(ratweight,flatten(map(lambda([t],[t,1]), sublist(append(x,X),lambda([t], not(is(member(t,ratweight())))))))),
+  n:length(x)/2,
+  u:makelist(part(X,i),i,1,n), Σ:makelist(part(x,i+n),i,1,n),
+  f:taylor(f,x,0*x,ratwtlvl),
+  f2:mratexpand(f,2),
+  [f2l,δ,s]:ezbnf_change_variables(x,f2),
+  /* ignore change of variables, we use un-normalized quadratic parts -> speed */
+  if false then f:lratsubst(s,f),
+  I:makelist(concat('I,i), i,1,n),
+  /* don't normalize frequencies in F while computing BNF */
+  F:apply("+",I) + block([ϣ:a],polynomial(I,2,ratwtlvl/2)),
+  g2:map("=",I,f2l),
+  [g,g2]:subst(map("=",x,X),[subst(g2,F),g2]),
+  [φ,d]:if φ=[] then [u.Σ,3] else [first(φ),hipowl(first(φ))+1],
+  φ:φ + polynomial(append(u,Σ),d,ratwtlvl),
+  sol:bnf2(x,X,φ,f,g,ratwtlvl),
+  /* normalize frequencies at this point, to get a BNF */
+  append([subst(map("=",I,I*δ),subst(first(sol),F))],map(lambda([a,b],lhs(a)=ratexpand(rhs(a)/b)),g2,δ),sol))$
+
+%ezbnf(v,h,n) :> block([s],s:ezbnf(v,h,3),
+  if n = 3 then s else %%ezbnf(v,h,4,n,last(s)))$
+%%ezbnf(v,h,m,n,[s]) :> if m = n then ezbnf(v,h,m,last(s))
+else %%ezbnf(v,h,m+1,n,last(ezbnf(v,h,m,last(s))))$
+
+/* end of bnf.mac */
