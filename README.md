@@ -52,5 +52,24 @@ and the remaining elements in the list `%o4` are
   * the generating function φ of the transformation from H to H₂.
 
 
-For a longer set of examples, see the rtest_bnf.mac file.
+For a longer set of examples, see the [rtest_bnf.mac](https://github.com/leo-butler/bnf/blob/master/rtest_bnf.mac) file.
 
+## Notes ##
+
+A reference for the Birkhoff normal form using generating functions is section 6.4 of
+[Robinson's Dynamical Systems](https://www.crcpress.com/Dynamical-Systems-Stability-Symbolic-Dynamics-and-Chaos/Robinson/p/book/9780849384950 "Textbook").
+
+## Requirements ##
+
+This package requires the following
+
+  * [with_gensyms](https://github.com/leo-butler/with_gensyms.git "with_gensyms"), a Maxima package.
+  * a unicode-aware lisp or the unicodedata package in Maxima.
+
+## TODO ##
+
+Implement a Lie transformation version.
+
+## Contact ##
+
+Email `printf(true,"~{~c~}",[108,101,111,46,98,117,116,108,101,114,64,117,109,97,110,105,116,111,98,97,46,99,97]);`
