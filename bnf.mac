@@ -185,6 +185,8 @@ verify_bnf(x,X,φ,f,s,[remove_params]) :> block([τ],
 
 add_maxima_symbol('I)$
 hipowl(e) :> block([t], hipow(lratsubst(map(lambda([x],x=t),listofindeterminates(e)),e),t))$
+det2x2(x) :> x[1][1]*x[2][2] - x[1][2]*x[2][1] $
+hess(f,v) :> outermap(lambda([x,y],diff(f,x,1,y,1)),v,v)$
 ezbnf_change_variables(x,f2) :> block([f2l,n,c,δ,s,r],
   local(a,r), declare(a,parameter),
   r(u,v,w) := if v#0 then 1 else (w/u)^(1/4),
@@ -193,7 +195,7 @@ ezbnf_change_variables(x,f2) :> block([f2l,n,c,δ,s,r],
   f2l:subst(c,makelist(a[i,1]*part(x,i)^2 + a[i,2]*part(x,i)*part(x,i+n)+a[i,3]*part(x,i+n)^2,i,1,n)),
   s:makelist(part(x,i)=part(x,i)*r(c[3*i-2],c[3*i-1],c[3*i]), i,1,n),
   s:append(s, makelist(part(x,i+n)=part(x,i+n)*r(c[3*i],c[3*i-1],c[3*i-2]), i,1,n)),
-  δ:makelist(determinant(hessian(part(f2l,i),listofindeterminates(part(f2l,i)))),i,1,n),
+  δ:makelist(det2x2(hess(part(f2l,i),listofindeterminates(part(f2l,i)))),i,1,n),
   δ:map(sqrt, δ),
   [f2l,δ]:lratsubst(c,[f2l,δ]),
   /* return quadratic parts, frequencies and transformation of variables separately */
