@@ -20,181 +20,241 @@
  * along with this file. If not, see http://www.gnu.org/licenses/. 
  */
 
+/* Problem 1 */
+(load(bnf), 'done);
+'done;
+
+/* Problem 2 */
 parameterp(ϣ);
 true;
 
+/* Problem 3 */
 parameterp(ϣ[x*y]);
 true;
 
+/* Problem 4 */
 monomialp(x+y,[x,y]);
 false;
 
+/* Problem 5 */
 monomialp(x[2],[x[2],y]);
 true;
 
+/* Problem 6 */
 monomialp(y^3,[x,y]);
 true;
 
+/* Problem 7 */
 monomialp(x*y^3,[x,y]);
 true;
 
+/* Problem 8 */
 monomialp(x[1]*y[0]^3,[x[1],y[0]]);
 true;
 
+/* Problem 9 */
 monomialp(x*y^3,[x]);
 false;
 
+/* Problem 10 */
 monomialp(5*x*y^3,[x,y]);
 true;
 
+/* Problem 11 */
 monomialp(%pi*x*y^3,[x,y]);
 true;
 
+/* Problem 12 */
 monomialp(y^x,[x,y]);
 false;
 
+/* Problem 13 */
 monomialp(y^n,[x,y]);
 false;
 
+/* Problem 14 */
 block([n], local(n), declare(n,constant), monomialp(y^n,[x,y]));
 true;
 
+/* Problem 15 */
 rat_multi_exponent(x*y ²,[x,y]);
 [1,2];
 
+/* Problem 16 */
 rat_multi_exponent(%pi*x*y ²,[x,y]);
 [1,2];
 
+/* Problem 17 */
 errcatch(rat_multi_exponent(pi*x*y ²,[x,y]));
 [];
 
+/* Problem 18 */
 listof(%pi*x*%e*5,constantp);
 [%e,%pi];
 
+/* Problem 19 */
 listof(%pi*x*%e*5,lambda([t],not(constantp(t))));
 [x];
 
+/* Problem 20 */
 listofparameters(%e*x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1);
 [ϣ[1,0], ϣ[1,2]];
 
+/* Problem 21 */
 zero_by_p(parameterp, %e*x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1);
 1;
 
+/* Problem 22 */
 block([%rnum_list:[%r1]], listofindeterminates(%pi+x*ϣ[1,0] + x*y ²*ϣ[1,2] + 1 + %r1 + %pi*%r3));
 [%r3,x,y];
 
+/* Problem 23 */
 monomials([],10);
 [1];
 
+/* Problem 24 */
 monomials(x,2);
 [x^2];
 
+/* Problem 25 */
 monomials([x],2);
 [x^2];
 
+/* Problem 26 */
 monomials(x+y,5);
 [x^5,x^4*y,x^3*y^2,x^2*y^3,x*y^4,y^5];
 
+/* Problem 27 */
 monomials([x,y],5);
 [x^5,x^4*y,x^3*y^2,x^2*y^3,x*y^4,y^5];
 
+/* Problem 28 */
 block([%rnum_list:[%r1,%r2]], remove_rnums([%r1,%r3]));
 [0,%r3];
 
+/* Problem 29 */
 homogeneous_polynomial([x,y],2);
 ϣ[0,2]*y^2+ϣ[1,1]*x*y+ϣ[2,0]*x^2;
 
+/* Problem 30 */
 homogeneous_polynomial_to_list(ratexpand((x+y+z) ³),3);
-[1,3,3,1,3,6,3,3,3,1];
+[1,3,3,3,6,3,1,3,3,1];
 
+/* Problem 31 */
 homogeneous_polynomial_to_list((a-b)*x+y,1,[x,y]);
 [a-b,1];
 
+/* Problem 32 */
 homogeneous_polynomial_to_list((a-b)*x+y,1,[x,y],true);
 [[a-b,x],[1,y]];
 
+/* Problem 33 */
 homogeneous_polynomial_to_list(%pi+4,0);
 [%pi+4];
 
+/* Problem 34 */
 homogeneous_polynomial_to_list(%pi+4,0,[x],true);
 [[%pi+4,1]];
 
+/* Problem 35 */
 homogeneous_polynomial_to_list(%pi+4,0,[],true);
 [[%pi+4,1]];
 
+/* Problem 36 */
 homogeneous_polynomial_to_list(0,3,[]);
 [0];
 
+/* Problem 37 */
 homogeneous_polynomial_to_list(0,3,[],true);
 [[0,1]];
 
+/* Problem 38 */
 polynomial_to_list(%e*x^2+(a-b)*x+y+c,2,[x,y]);
 [[%e,x^2],[0,x*y],[0,y^2],[a-b,x],[1,y],[c,1]];
 
+/* Problem 39 */
 freeofl([u,X],[u]);
 false;
 
+/* Problem 40 */
 freeofl([u,X],[x^3+y]);
 true;
 
+/* Problem 41 */
 (ratweight(x,1,y,1,X,1,Y,1), 'done);
 'done;
 
+/* Problem 42 */
 misolate(x,%e*x+5*x^2);
 5*%e^-1*x^2+x;
 
+/* Problem 43 */
 misolate(x,x^3+5*x^2);
 x^3+5*x^2;
 
+/* Problem 44 */
 iter_solve([y = x/3],[x],1);
 [x = 3*y];
 
+/* Problem 45 */
 ratexpand(
   iter_solve([y = ratexpand(taylor(log(1-x),x,0,4))],[x],4) -
   [x = -(y^4+4*y^3+12*y^2+24*y)/24]); /* 1-x = e^y */
 [0=0];
 
+/* Problem 46 */
 /* seed with penultimate substitution from last problem */
 ratexpand(
   iter_solve([y = ratexpand(taylor(log(1-x),x,0,4))],[x],4,[x = (11*y^4-4*y^3+((-12*x^2)-12)*y^2-24*y)/24]) -
   [x = -(y^4+4*y^3+12*y^2+24*y)/24]);
 [0=0];
 
+/* Problem 47 */
 /* system */
 iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],1);
 [x = 3*X,y = -Y];
 
+/* Problem 48 */
 iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3);
 [x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
 
+/* Problem 49 */
 /* seed with penultimate substitution from last problem */
 iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3,[x = 18*Y*x^2-9*Y^2+3*X,y = x^2-Y]);
 [x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
 
+/* Problem 50 */
 /* seed with solution from last problem */
 iter_solve([X = x/3 + 3*y ², Y = x ² - y],[x,y],3, [x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2]);
 [x = (-9*Y^2)+162*X^2*Y+3*X,y = (-54*X*Y^2)-Y+9*X^2];
 
+/* Problem 51 */
 kill(x,y,X,Y);
 'done;
 
+/* Problem 52 */
 (declare([a,b,c],parameter), solve_for_parameters1((a ² - b)*x*y + c*x ² + (a+b-c)*y ², 2)), solve_for_parameters1_solve=solve;
 [[c = 0,a = 0,b = 0],[c = 0,a = -1,b = 1]];
 
+/* Problem 53 */
 /* first output of genfun_transformation is Γ = d φ, which is not truncated;
 second output is the truncated, implicit symplectic map */
 genfun_transformation_explicit([x1,x2,X1,X2],[y1,y2,Y1,Y2],X1*y2+X2*y1,2);
 [[x1 = y2,x2 = y1,Y1 = X2,Y2 = X1],[y1 = x2,y2 = x1,Y1 = X2,Y2 = X1]];
 
+/* Problem 54 */
 genfun_transformation_explicit([x1,x2,X1,X2],[y1,y2,Y1,Y2],X1*y2+X2*y1,-2);
 [[x1 = y2,x2 = y1,Y1 = X2,Y2 = X1],[y1 = x2,y2 = x1,Y1 = X2,Y2 = X1]];
 
+/* Problem 55 */
 block([s,S,σ,Σ], ratweight(s,1,S,1,σ,1,Σ,1), genfun_transformation([σ,Σ],[s,S], s*Σ + s ²*Σ,1));
 [[σ = s^2+s,S = 2*s*Σ+Σ],[s = σ,Σ = S]];
 
+/* Problem 56 */
 block([s,S,σ,Σ], ratweight(s,1,S,1,σ,1,Σ,1), genfun_transformation([σ,Σ],[s,S], s*Σ + s ²*Σ,2));
 [[σ = s^2+s,S = 2*s*Σ+Σ],[s = (-σ^2)+σ,Σ = S-2*σ*S]];
 
+/* Problem 57 */
 /* harmonic oscillators */
 block([ratwtlvl,%rnum:0],
   kill(s,S,σ,Σ,τ,f,g,a,d),
@@ -207,6 +267,7 @@ block([ratwtlvl,%rnum:0],
   );
 s*Σ;
 
+/* Problem 58 */
 block([ratwtlvl,%rnum:0],
   kill(s,S,σ,Σ,τ,f,g,a,d),
   ratweight(s,1,S,1,σ,1,Σ,1), declare(a,parameter),
@@ -218,7 +279,7 @@ block([ratwtlvl,%rnum:0],
   );
 s*Σ;
 
-/* too long
+/* IGNORE: TOO LONG
 block([ratwtlvl:false,s],
   kill(x,X,u,U,α,β,γ,δ,ε),
   ratweight(x,1,X,1,u,1,U,1), declare([α,β,γ,δ,ε],parameter),
@@ -232,6 +293,7 @@ block([ratwtlvl:false,s],
 [0,0,0,0,0];
 */
 
+/* Problem 59 */
 /* harmonic oscillator */
 block([ratwtlvl:false],
   kill(x,X,y,Y,σ,Σ,μ,Μ,φ,α),
@@ -256,7 +318,7 @@ block([ratwtlvl:false],
   );
 0;
 
-
+/* Problem 60 */
 /* from Ali & Wood, Prog. Theor. Phys., vol 78(4), Oct 1987 */
 (
   hornerpoly(x,c,n) :> horner(sum(x^i*c[i],i,0,n),x),
@@ -275,18 +337,20 @@ block([ratwtlvl:false],
   done) $
 done;
 
-/* Evaluation took 0.2160 seconds (0.2150 elapsed) using 45.629 MB. */
+/* Problem 61 */
+/* Evaluation took 0.0496 seconds (0.0480 elapsed) using 31.668 MB. */
 ratexpand(
   ali_wood(4) -
   [(3*G - 15*B^2)/4]);
 [0];
 
+/* Problem 62 */
+/* Evaluation took 0.1791 seconds (0.1800 elapsed) using 113.003 MB. */
 ratexpand(
   ali_wood(6,last(s)) -
   [(3*G-15*B^2)/4,-(17*G^2-450*B^2*G+705*B^4)/16]);
 [0,0];
-
-/* Evaluation took 881.6000 seconds (883.0860 elapsed) using 316998.049 MB. */
+/* Evaluation took 371.9390 seconds (371.9810 elapsed) using 293196.645 MB. */
 /*
 ali_wood(16);
 [(3*G-15*B^2)/4,-(17*G^2-450*B^2*G+705*B^4)/16,
@@ -308,6 +372,7 @@ ali_wood(16);
 /262144];
 */
 
+/* Problem 63 */
 /* harmonic oscillators Hoover */
 block([ratwtlvl,%rnum:0],
   kill(x,y,X,Y,a,φ),
@@ -323,6 +388,7 @@ block([ratwtlvl,%rnum:0],
   );
 y^3/9+(X^2*y)/6+X*y;
 
+/* Problem 64 */
 block([ratwtlvl,%rnum:0],
   kill(x,y,X,Y,a),
   ratweight(x,1,y,1,X,1,Y,1), declare(a,parameter),
@@ -333,9 +399,423 @@ block([ratwtlvl,%rnum:0],
   );
 [-1/24,(19*X*y^3)/288+y^3/9+(5*X^3*y)/288+(X^2*y)/6+X*y];
 
+/* Problem 65 */
+/* Gustavson, FG, ; On constructing formal integrals of a hamiltonian system near an equilibrium point. Astro J, 71(8), 1966.
+*/
+block([a,b,I1,I2,I3,ratwtlvl],
+  declare([a,b],parameter),
+  map(lambda([t],apply(ratweight,[t,1])),[x,X,%x,%X,y,Y,%y,%Y]),
+  map(lambda([t],apply(ratweight,[t,2])),[I1,I2,I3]),
+  H : (X ² + Y ² + x ² + y ²)/2 + 2*x ²*y - y ³/3,
+  s : [I1=(%x ² + %X ²)/2, I2=(%y ² + %Y ²)/2, I3=%x*%y+%X*%Y],
+  ratwtlvl : 4,
+  G : I1+I2+polynomial([I1,I2,I3],2,ratwtlvl/2),
+  Gs : subst(s,G),
+  φ : %x*X+%y*Y+polynomial([%x,X,%y,Y],3,ratwtlvl),
+  bnf2([x,y,X,Y],[%x,%y,%X,%Y],φ,H,Gs,ratwtlvl), 'done);
+'done;
+
+/* Problem 66 */
 (kill(x,y,X,Y,z,a,b,c,s,S,σ,Σ,φ,f,g));
 'done;
 
+/* Problem 67 */
+/* Lie Transforms */
+canonical_poisson_structure(2);
+matrix([0,0,1,0],[0,0,0,1],[-1,0,0,0],[0,-1,0,0]);
 
+/* Problem 68 */
+pgrad(x^2/2+y^2/2,[x,y]);
+[y,-x];
 
+/* Problem 69 */
+define_hamvf(Hho,x^2/2+y^2/2,[x,y]);
+'Hho;
+
+/* Problem 70 */
+get(Hho,'pgrad);
+[y,-x];
+
+/* Problem 71 */
+get(Hho,'pgradfun);
+lambda([x,y],[y,-x]);
+
+/* Problem 72 */
+get(Hho,'coordinates);
+[x,y];
+
+/* Problem 73 */
+block([poisson_bracket:'pb],
+  kill(eWF,F,W,f,w,pb),
+  texput(pb,lambda([expr], block([x:args(expr)], printf(false,"\\{~a,~a\\}",tex1(first(x)),tex1(second(x)))))),
+  depends([f,w],[x,y]),
+  declare(ϵ,scalar),
+  define_hamvf(F,sum(f[k]*ϵ^k/k!,k,0,2),[x,y]),
+  define_hamvf(W,sum(w[k]*ϵ^k/k!,k,0,2),[x,y]),
+  apply1(apply(poisson_bracket,[W,F]),coerce2hamiltonian),
+  expand_poisson_bracket(%%,poisson_bracket));
+(ϵ^4*pb(w[2],f[2]))/4+(ϵ^3*pb(w[2],f[1]))/2+(ϵ^2*pb(w[2],f[0]))/2+(ϵ^3*pb(w[1],f[2]))/2+ϵ^2*pb(w[1],f[1])+ϵ*pb(w[1],f[0])+(ϵ^2*pb(w[0],f[2]))/2+ϵ*pb(w[0],f[1])+pb(w[0],f[0]);
+
+/* Problem 74 */
+block([poisson_bracket:'pb, forget_Λ:true],
+  kill(eWF,F,W),
+  declare(ϵ,scalar),
+  define_hamvf(F,sum(f[k]*ϵ^k/k!,k,0,2),[x,y]),
+  define_hamvf(W,sum(w[k]*ϵ^k/k!,k,0,2),[x,y]),
+  expand_poisson_bracket(apply1(Λ(W,F,1,ϵ),coerce2hamiltonian),poisson_bracket));
+(pb(f[2],w[2])*ϵ^4)/4+(pb(f[2],w[1])*ϵ^3)/2+(pb(f[1],w[2])*ϵ^3)/2+(pb(f[2],w[0])*ϵ^2)/2+pb(f[1],w[1])*ϵ^2+(pb(f[0],w[2])*ϵ^2)/2+pb(f[1],w[0])*ϵ+pb(f[0],w[1])*ϵ+f[2]*ϵ+pb(f[0],w[0])+f[1];
+
+/* Problem 75 */
+(deprit_trans(ratwtlvl) := block([poisson_bracket:'pb, forget_Λ:true,ratweights],
+  ratweight(ϵ,1),
+  kill(eWF,F,W),
+  declare(ϵ,scalar),
+  define_hamvf(F,sum(f[k]*ϵ^k/k!,k,0,ratwtlvl),[x,y]),
+  define_hamvf(W,sum(w[k]*ϵ^k/k!,k,0,ratwtlvl),[x,y]),
+  apply1(expΛ(W,F,ratwtlvl,ϵ),coerce2hamiltonian)),
+  deprit_trans(2));
+((pb(pb(f[0],w[0]),w[0])+2*pb(f[1],w[0])+pb(f[0],w[1])+f[2])*ϵ^2)/2+(pb(f[0],w[0])+f[1])*ϵ+f[0];
+
+/* Problem 76 */
+deprit_trans(3);
+((pb(pb(pb(f[0],w[0]),w[0]),w[0])+3*pb(pb(f[1],w[0]),w[0])+2*pb(pb(f[0],w[1]),w[0])+pb(pb(f[0],w[0]),w[1])+3*pb(f[2],w[0])+3*pb(f[1],w[1])+pb(f[0],w[2])+f[3])*ϵ^3)/6+((pb(pb(f[0],w[0]),w[0])+2*pb(f[1],w[0])+pb(f[0],w[1])+f[2])*ϵ^2)/2+(pb(f[0],w[0])+f[1])*ϵ+f[0];
+
+/* Problem 77 */
+(declare([B,ω],constant), assume(ω>0),
+  define_hamvf(Fho,ϵ*B*x^3/3+ω^2*x^2/2+y^2/2,[x,y]));
+'Fho;
+
+/* Problem 78 */
+coerce2hamiltonian(Fho);
+ϵ*B*x^3/3+ω^2*x^2/2+y^2/2;
+
+/* Problem 79 */
+(print(poisson_bracket), factor(poisson_bracket(Hho,Fho)));
+-(x*y*(x*B*ϵ+ω^2-1));
+
+/* Problem 80 */
+block([ϵ],
+  define_hamvf(Wr,ω^2*x^2/2+y^2/2, [x,y]),
+  expand(get(Λ(Wr,Fho),'hamiltonian)));
+B*x^2*y*ϵ+B*x^3/3;
+
+/* Problem 81 */
+collectterms(expand(get(Λ(Wr,Fho,2),'hamiltonian)),ϵ);
+(2*B*x*y^2-B*ω^2*x^3)*ϵ+2*B*x^2*y;
+
+/* Problem 82 */
+collectterms(expand(get(Λ(Wr,Fho,3),'hamiltonian)),ϵ);
+(2*B*y^3-7*B*ω^2*x^2*y)*ϵ+6*B*x*y^2-3*B*ω^2*x^3;
+
+/* Problem 83 */
+collectterms(expand(get(Λ(Wr,Fho,4),'hamiltonian)),ϵ);
+(7*B*ω^4*x^3-20*B*ω^2*x*y^2)*ϵ+8*B*y^3-28*B*ω^2*x^2*y;
+
+/* Problem 84 */
+block([ϵ,forget_Λ:true,ratweights:[]],
+  ratweight(ϵ,1),
+  define_graded_hamvf(Wg,sum(ϵ^(m-3)/m!*sum(x^k*y^(m-k)*b[k,m-k],k,0,m),m,3,6),[x,y],ϵ,3),
+  apply1(get(Wg,'graded_hamiltonian),coerce2hamiltonian));
+[(b[0,3]*y^3)/6+(b[1,2]*x*y^2)/6+(b[2,1]*x^2*y)/6+(b[3,0]*x^3)/6,(b[0,4]*y^4+b[1,3]*x*y^3+b[2,2]*x^2*y^2+b[3,1]*x^3*y+b[4,0]*x^4)/24,(b[0,5]*y^5+b[1,4]*x*y^4+b[2,3]*x^2*y^3+b[3,2]*x^3*y^2+b[4,1]*x^4*y+b[5,0]*x^5)/60,(b[0,6]*y^6+b[1,5]*x*y^5+b[2,4]*x^2*y^4+b[3,3]*x^3*y^3+b[4,2]*x^4*y^2+b[5,1]*x^5*y+b[6,0]*x^6)/120];
+
+/* Problem 85 */
+poisson_bracket:'pb;
+'pb;
+
+/* Problem 86 */
+block([forget_Λ:true, N:5],
+  kill(eWF,F,W),
+  declare([b,ϵ],scalar),
+  define_graded_hamvf(F,sum(f[k]*ϵ^k/k!,k,0,N),[x,y],ϵ,N),
+  define_graded_hamvf(W,sum(w[k+1]*ϵ^k/k!,k,0,N),[x,y],ϵ,N),
+  deprit_new_f[W,F,0,0]);
+F_0;
+
+/* Problem 87 */
+deprit_new_f[W,F,1,0];
+F_1+pb(F_0,W_0);
+
+/* Problem 88 */
+expand_poisson_bracket(%,pb);
+pb(f[0],w[1])+f[1];
+
+/* Problem 89 */
+deprit_new_f[W,F,1,1];
+F_2+pb(F_1,W_0)+pb(F_0,W_1);
+
+/* Problem 90 */
+expand_poisson_bracket(%,pb);
+pb(f[1],w[1])+pb(f[0],w[2])+f[2];
+
+/* Problem 91 */
+deprit_new_f[W,F,2,0];
+F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1);
+
+/* Problem 92 */
+expand_poisson_bracket(%,pb);
+pb(pb(f[0],w[1]),w[1])+2*pb(f[1],w[1])+pb(f[0],w[2])+f[2];
+
+/* Problem 93 */
+deprit_new_f[W,F,1,2];
+F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2);
+
+/* Problem 94 */
+expand_poisson_bracket(%,pb);
+pb(f[2],w[1])+2*pb(f[1],w[2])+pb(f[0],w[3])+f[3];
+
+/* Problem 95 */
+deprit_new_f[W,F,3,0];
+F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2);
+
+/* Problem 96 */
+expand_poisson_bracket(%,pb);
+pb(pb(pb(f[0],w[1]),w[1]),w[1])+3*pb(pb(f[1],w[1]),w[1])+2*pb(pb(f[0],w[2]),w[1])+pb(pb(f[0],w[1]),w[2])+3*pb(f[2],w[1])+3*pb(f[1],w[2])+pb(f[0],w[3])+f[3];
+
+/* Problem 97 */
+deprit_new_f[W,F,4,0];
+F_4+pb(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_1)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3);
+
+/* Problem 98 */
+expand_poisson_bracket(%,pb);
+pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1])+4*pb(pb(pb(f[1],w[1]),w[1]),w[1])+3*pb(pb(pb(f[0],w[2]),w[1]),w[1])+2*pb(pb(pb(f[0],w[1]),w[2]),w[1])+pb(pb(pb(f[0],w[1]),w[1]),w[2])+6*pb(pb(f[2],w[1]),w[1])+8*pb(pb(f[1],w[2]),w[1])+4*pb(pb(f[1],w[1]),w[2])+3*pb(pb(f[0],w[3]),w[1])+3*pb(pb(f[0],w[2]),w[2])+pb(pb(f[0],w[1]),w[3])+4*pb(f[3],w[1])+6*pb(f[2],w[2])+4*pb(f[1],w[3])+pb(f[0],w[4])+f[4];
+
+/* Problem 99 */
+deprit_lie_transform(W,F,0,ϵ);
+exp_W_F_0;
+
+/* Problem 100 */
+deprit_lie_transform(W,F,1,ϵ);
+exp_W_F_1;
+
+/* Problem 101 */
+get(%,'hamiltonian);
+ϵ*(F_1+pb(F_0,W_0))+F_0;
+
+/* Problem 102 */
+deprit_lie_transform(W,F,2,ϵ);
+exp_W_F_2;
+
+/* Problem 103 */
+get(%,'hamiltonian);
+(ϵ^2*(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1)))/2+ϵ*(F_1+pb(F_0,W_0))+F_0;
+
+/* Problem 104 */
+ratexpand_poisson_bracket(%,pb,ϵ,2);
+(pb(pb(f[0],w[1]),w[1])/2+pb(f[1],w[1])+pb(f[0],w[2])/2+f[2]/2)*ϵ^2+(pb(f[0],w[1])+f[1])*ϵ+f[0];
+
+/* Problem 105 */
+deprit_lie_transform(W,F,3,ϵ);
+exp_W_F_3;
+
+/* Problem 106 */
+get(%,'hamiltonian);
+(ϵ^3*(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2)))/6+(ϵ^2*(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1)))/2+ϵ*(F_1+pb(F_0,W_0))+F_0;
+
+/* Problem 107 */
+ratexpand_poisson_bracket(%,pb,ϵ,hipow(%,ϵ));
+(pb(pb(pb(f[0],w[1]),w[1]),w[1])/6+pb(pb(f[1],w[1]),w[1])/2+pb(pb(f[0],w[2]),w[1])/3+pb(pb(f[0],w[1]),w[2])/6+pb(f[2],w[1])/2+pb(f[1],w[2])/2+pb(f[0],w[3])/6+f[3]/6)*ϵ^3+(pb(pb(f[0],w[1]),w[1])/2+pb(f[1],w[1])+pb(f[0],w[2])/2+f[2]/2)*ϵ^2+(pb(f[0],w[1])+f[1])*ϵ+f[0];
+
+/* Problem 108 */
+deprit_lie_transform(W,F,4,ϵ);
+exp_W_F_4;
+
+/* Problem 109 */
+get(%,'hamiltonian);
+((F_4+pb(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_1)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3))*ϵ^4)/24+((F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2))*ϵ^3)/6+((F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1))*ϵ^2)/2+(F_1+pb(F_0,W_0))*ϵ+F_0;
+
+/* Problem 110 */
+ratexpand_poisson_bracket(%,pb,ϵ,hipow(%,ϵ));
+(pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1])/24+pb(pb(pb(f[1],w[1]),w[1]),w[1])/6+pb(pb(pb(f[0],w[2]),w[1]),w[1])/8+pb(pb(pb(f[0],w[1]),w[2]),w[1])/12+pb(pb(pb(f[0],w[1]),w[1]),w[2])/24+pb(pb(f[2],w[1]),w[1])/4+pb(pb(f[1],w[2]),w[1])/3+pb(pb(f[1],w[1]),w[2])/6+pb(pb(f[0],w[3]),w[1])/8+pb(pb(f[0],w[2]),w[2])/8+pb(pb(f[0],w[1]),w[3])/24+pb(f[3],w[1])/6+pb(f[2],w[2])/4+pb(f[1],w[3])/6+pb(f[0],w[4])/24+f[4]/24)*ϵ^4+(pb(pb(pb(f[0],w[1]),w[1]),w[1])/6+pb(pb(f[1],w[1]),w[1])/2+pb(pb(f[0],w[2]),w[1])/3+pb(pb(f[0],w[1]),w[2])/6+pb(f[2],w[1])/2+pb(f[1],w[2])/2+pb(f[0],w[3])/6+f[3]/6)*ϵ^3+(pb(pb(f[0],w[1]),w[1])/2+pb(f[1],w[1])+pb(f[0],w[2])/2+f[2]/2)*ϵ^2+(pb(f[0],w[1])+f[1])*ϵ+f[0];
+
+/* Problem 111 */
+deprit_lie_transform(W,F,5,ϵ);
+exp_W_F_5;
+
+/* Problem 112 */
+get(%,'hamiltonian);
+(ϵ^5*(F_5+pb(F_4+pb(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_1)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3),W_0)+pb(F_4+pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_1)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3),W_0)+pb(F_4+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3),W_0)+pb(F_4+pb(F_3,W_0)+3*pb(F_2,W_1)+3*pb(F_1,W_2)+pb(F_0,W_3),W_0)+pb(F_4,W_0)+pb(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_1)+2*pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_1)+3*pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_1)+4*pb(F_3,W_1)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_2)+3*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_2)+6*pb(F_2,W_2)+pb(F_1+pb(F_0,W_0),W_3)+4*pb(F_1,W_3)+pb(F_0,W_4)))/120+(ϵ^4*(F_4+pb(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+pb(F_3,W_0)+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_1)+2*pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_1)+3*pb(F_2,W_1)+pb(F_1+pb(F_0,W_0),W_2)+3*pb(F_1,W_2)+pb(F_0,W_3)))/24+(ϵ^3*(F_3+pb(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2+pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(F_2,W_0)+pb(F_1+pb(F_0,W_0),W_1)+2*pb(F_1,W_1)+pb(F_0,W_2)))/6+(ϵ^2*(F_2+pb(F_1+pb(F_0,W_0),W_0)+pb(F_1,W_0)+pb(F_0,W_1)))/2+ϵ*(F_1+pb(F_0,W_0))+F_0;
+
+/* Problem 113 */
+ratexpand_poisson_bracket(%,pb,ϵ,hipow(%,ϵ));
+(pb(pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1]),w[1])/120+pb(pb(pb(pb(f[1],w[1]),w[1]),w[1]),w[1])/24+pb(pb(pb(pb(f[0],w[2]),w[1]),w[1]),w[1])/30+pb(pb(pb(pb(f[0],w[1]),w[2]),w[1]),w[1])/40+pb(pb(pb(pb(f[0],w[1]),w[1]),w[2]),w[1])/60+pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[2])/120+pb(pb(pb(f[2],w[1]),w[1]),w[1])/12+pb(pb(pb(f[1],w[2]),w[1]),w[1])/8+pb(pb(pb(f[1],w[1]),w[2]),w[1])/12+pb(pb(pb(f[1],w[1]),w[1]),w[2])/24+pb(pb(pb(f[0],w[3]),w[1]),w[1])/20+pb(pb(pb(f[0],w[2]),w[2]),w[1])/15+pb(pb(pb(f[0],w[2]),w[1]),w[2])/30+pb(pb(pb(f[0],w[1]),w[3]),w[1])/40+pb(pb(pb(f[0],w[1]),w[2]),w[2])/40+pb(pb(pb(f[0],w[1]),w[1]),w[3])/120+pb(pb(f[3],w[1]),w[1])/12+pb(pb(f[2],w[2]),w[1])/6+pb(pb(f[2],w[1]),w[2])/12+pb(pb(f[1],w[3]),w[1])/8+pb(pb(f[1],w[2]),w[2])/8+pb(pb(f[1],w[1]),w[3])/24+pb(pb(f[0],w[4]),w[1])/30+pb(pb(f[0],w[3]),w[2])/20+pb(pb(f[0],w[2]),w[3])/30+pb(pb(f[0],w[1]),w[4])/120+pb(f[4],w[1])/24+pb(f[3],w[2])/12+pb(f[2],w[3])/12+pb(f[1],w[4])/24+pb(f[0],w[5])/120+f[5]/120)*ϵ^5+(pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1])/24+pb(pb(pb(f[1],w[1]),w[1]),w[1])/6+pb(pb(pb(f[0],w[2]),w[1]),w[1])/8+pb(pb(pb(f[0],w[1]),w[2]),w[1])/12+pb(pb(pb(f[0],w[1]),w[1]),w[2])/24+pb(pb(f[2],w[1]),w[1])/4+pb(pb(f[1],w[2]),w[1])/3+pb(pb(f[1],w[1]),w[2])/6+pb(pb(f[0],w[3]),w[1])/8+pb(pb(f[0],w[2]),w[2])/8+pb(pb(f[0],w[1]),w[3])/24+pb(f[3],w[1])/6+pb(f[2],w[2])/4+pb(f[1],w[3])/6+pb(f[0],w[4])/24+f[4]/24)*ϵ^4+(pb(pb(pb(f[0],w[1]),w[1]),w[1])/6+pb(pb(f[1],w[1]),w[1])/2+pb(pb(f[0],w[2]),w[1])/3+pb(pb(f[0],w[1]),w[2])/6+pb(f[2],w[1])/2+pb(f[1],w[2])/2+pb(f[0],w[3])/6+f[3]/6)*ϵ^3+(pb(pb(f[0],w[1]),w[1])/2+pb(f[1],w[1])+pb(f[0],w[2])/2+f[2]/2)*ϵ^2+(pb(f[0],w[1])+f[1])*ϵ+f[0];
+
+/* Problem 114 */
+poisson_bracket:'poisson_bracket;
+poisson_bracket;
+
+/* Problem 115 */
+block([ϵ,forget_Λ:true],
+  define_hamvf(W,sum(ϵ^(m-3)/m!*sum(x^k*y^(m-k)*b[k,m-k],k,0,m),m,3,6), [x,y]),
+  Λ(W,Fho,0));
+'Fho;
+
+/* Ignore: SLOW
+Λ(W,Fho,2);
+'W_Fho_2;
+
+%Λ(W,Fho,0,ϵ);
+'Fho;
+
+%Λ(W,Fho,3,ϵ);
+'W_Fho_3;
+
+expΛ(W,Fho,2);
+'exp_W_Fho_2;
+*/
+
+/* Problem 116 */
+(define_hamvf_hooks:[rat], poisson_bracket:'poisson_bracket_strict);
+poisson_bracket_strict;
+
+/* Problem 117 */
+/* from Ali & Wood, Prog. Theor. Phys., vol 78(4), Oct 1987
+   F = x²/2 + y²/2 + ϵBx³ + ϵ²Gx⁴/2
+   First step: remove the cubic term
+*/
+block([ratweights:[],poisson_bracket:'poisson_bracket_strict,N:1],
+  kill(Fg,Wg,B,G),
+  reinit_deprit_new_f(),
+  ratweight(ϵ,1),
+  declare([B,G],constant,b,parameter),
+  define_graded_hamvf(Fg,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+  define_graded_hamvf(Wg,sum(ϵ^(m-3)*sum(b[k,m-k]*x^k*y^(m-k),k,0,m),m,3,2+N),[x,y],ϵ,N-1),
+  deprit_new_f[Wg,Fg,N,0]);
+Fg_1+Fg_0_Wg_0;
+
+/* Problem 118 */
+apply1(%,coerce2hamiltonian);
+-(b[1,2]*y^3)+(3*b[0,3]-2*b[2,1])*x*y^2+(2*b[1,2]-3*b[3,0])*x^2*y+b[2,1]*x^3+B*x^3;
+
+/* Problem 119 */
+homogeneous_polynomial_to_list(%,3,[x,y]);
+[b[2,1]+B,2*b[1,2]-3*b[3,0],3*b[0,3]-2*b[2,1],-b[1,2]];
+
+/* Problem 120 */
+sol1:linsolve(%,listofparameters(%));
+[b[2,1] = -B,b[1,2] = 0,b[3,0] = 0,b[0,3] = -((2*B)/3)];
+
+/* Problem 121 */
+subst(sol1,get(Wg,'hamiltonian));
+-((2*B*y^3)/3)-B*x^2*y;
+
+/* Problem 122 */
+/* Second step: normalize quartic term */
+block([B,G,ratweights:[],poisson_bracket:'poisson_bracket_strict,N:2],
+  /*reinit_deprit_new_f(),*/
+  declare([B,G],constant,ϵ,scalar,b,parameter),
+  ratweight(ϵ,1),
+  define_graded_hamvf(Fg,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+  define_graded_hamvf(Wg,subst(sol1,sum(ϵ^(m-3)*sum(b[k,m-k]*x^k*y^(m-k),k,0,m),m,3,2+N)),[x,y],ϵ,N-1),
+  update_hamiltonians(sol1),
+  deprit_new_f[Wg,Fg,N,0]);
+Fg_2+2*Fg_1_Wg_0+Fg_0_Wg_1+Fg_0_Wg_0_Wg_0;
+
+/* Problem 123 */
+(newf20:apply1(%,coerce2hamiltonian),
+  expand(newf20-
+    (-(b[1,3]*y^4)+(4*b[0,4]-2*b[2,2])*x*y^3+2*(-(6*B^2*x^2*y^2)-3*B^2*x^4)+(3*b[1,3]-3*b[3,1])*x^2*y^2+6*B^2*x^2*y^2+(2*b[2,2]-4*b[4,0])*x^3*y+b[3,1]*x^4+G*x^4+3*B^2*x^4)));
+0;
+
+/* Problem 124 */
+(declare(A2,parameter),
+  homogeneous_polynomial_to_list(newf20/2!-A2*(x^2+y^2)^2/4,4,[x,y]));
+[-((A2-2*b[3,1]-2*G+6*B^2)/4),b[2,2]-2*b[4,0],-((A2+3*b[3,1]-3*b[1,3]+6*B^2)/2),2*b[0,4]-b[2,2],-((A2+2*b[1,3])/4)];
+
+/* Problem 125 */
+block([%rnum:0],
+  sol2:linsolve(%,listofparameters(%)));
+[b[3,1] = -((5*G-9*B^2)/8),A2 = (3*G-15*B^2)/4,b[2,2] = 2*%r1,b[4,0] = %r1,b[1,3] = -((3*G-15*B^2)/8),b[0,4] = %r1];
+
+/* Problem 126 */
+subst(subst(%r1=0,sol2),get(Wg,'hamiltonian));
+((-((3*(3*G-15*B^2)*ϵ*x)/8)-2*B)*y^3+(-((3*(5*G-9*B^2)*ϵ*x^3)/8)-3*B*x^2)*y)/3;
+
+/* Problem 127 */
+/* Third step: eliminate quintic terms */
+block([B,G,ratweights:[],poisson_bracket:'poisson_bracket_strict,N:3,sol:subst(%r1=0,append(sol1,sol2))],
+  declare([B,G],constant,ϵ,scalar,b,parameter),
+  ratweight(ϵ,1),
+  define_graded_hamvf(Fg,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+  define_graded_hamvf(Wg,subst(sol,sum(ϵ^(m-3)*sum(b[k,m-k]*x^k*y^(m-k),k,0,m),m,3,2+N)),[x,y],ϵ,N-1),
+  update_hamiltonians(sol),
+  deprit_new_f[Wg,Fg,N,0]);
+3*Fg_2_Wg_0+3*Fg_1_Wg_1+3*Fg_1_Wg_0_Wg_0+Fg_0_Wg_2+2*Fg_0_Wg_1_Wg_0+Fg_0_Wg_0_Wg_1+Fg_0_Wg_0_Wg_0_Wg_0;
+
+/* Problem 128 */
+(newf30:apply1(%,coerce2hamiltonian),
+  expand(newf30-
+    (-(2*b[1,4]*y^5)+3*(24*B^3*x*y^4+12*B^3*x^3*y^2+12*B^3*x^5)+(10*b[0,5]-4*b[2,3])*x*y^4-72*B^3*x*y^4+(8*b[1,4]-6*b[3,2])*x^2*y^3-((27*B*G-135*B^3)*x^3*y^2+(15*B*G-27*B^3)*x^5)/4+3*(-(8*B*G*x^3*y^2)-4*B*G*x^5)+(6*b[2,3]-8*b[4,1])*x^3*y^2-(9*B^3-13*B*G)*x^3*y^2-12*B^3*x^3*y^2+(4*b[3,2]-10*b[5,0])*x^4*y+2*b[4,1]*x^5-(9*B^3-5*B*G)*x^5-12*B^3*x^5)));
+0;
+
+/* Problem 129 */
+homogeneous_polynomial_to_list(newf30/3!,5,[x,y]);
+[(8*b[4,1]-43*B*G+87*B^3)/24,-((5*b[5,0]-2*b[3,2])/3),-((32*b[4,1]-24*b[2,3]+71*B*G-195*B^3)/24),-((3*b[3,2]-4*b[1,4])/3),-((2*b[2,3]-5*b[0,5])/3),-(b[1,4]/3)];
+
+/* Problem 130 */
+block([%rnum:0],
+  sol3:linsolve(%,listofparameters(%)));
+[b[4,1] = (43*B*G-87*B^3)/8,b[3,2] = 0,b[5,0] = 0,b[2,3] = (81*B*G-181*B^3)/8,b[1,4] = 0,b[0,5] = (81*B*G-181*B^3)/20];
+
+/* Problem 131 */
+subst(sol3,get(Wg,'hamiltonian));
+((6*(81*B*G-181*B^3)*ϵ^2*y^5)/5+(3*(81*B*G-181*B^3)*ϵ^2*x^2+(45*B^2-9*G)*ϵ*x-16*B)*y^3+(3*(43*B*G-87*B^3)*ϵ^2*x^4+(27*B^2-15*G)*ϵ*x^3-24*B*x^2)*y)/24;
+
+/* Problem 132 */
+/* Fourth step: normalize sextic terms */
+block([B,G,ratweights:[],poisson_bracket:'poisson_bracket_strict,N:4,sol:subst(%r1=0,append(sol1,sol2,sol3))],
+  declare([B,G],constant,ϵ,scalar,b,parameter),
+  ratweight(ϵ,1),
+  define_graded_hamvf(Fg,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+  define_graded_hamvf(Wg,subst(sol,sum(ϵ^(m-3)*sum(b[k,m-k]*x^k*y^(m-k),k,0,m),m,3,2+N)),[x,y],ϵ,N-1),
+  update_hamiltonians(sol),
+  deprit_new_f[Wg,Fg,N,0]);
+2*(Fg_2_Wg_1+Fg_1_Wg_0_Wg_1+Fg_0_Wg_1_Wg_1)+4*Fg_2_Wg_1+6*Fg_2_Wg_0_Wg_0+4*Fg_1_Wg_2+8*Fg_1_Wg_1_Wg_0+2*Fg_1_Wg_0_Wg_1+4*Fg_1_Wg_0_Wg_0_Wg_0+Fg_0_Wg_3+3*Fg_0_Wg_2_Wg_0+Fg_0_Wg_1_Wg_1+3*Fg_0_Wg_1_Wg_0_Wg_0+Fg_0_Wg_0_Wg_2+2*Fg_0_Wg_0_Wg_1_Wg_0+Fg_0_Wg_0_Wg_0_Wg_1+Fg_0_Wg_0_Wg_0_Wg_0_Wg_0;
+
+/* Problem 133 */
+(newf40:apply1(%,coerce2hamiltonian),
+  expand(newf40-
+    (2*(((9*G^2-90*B^2*G+225*B^4)*y^6+(27*G^2-270*B^2*G+675*B^4)*x^2*y^4+(75*G^2-270*B^2*G+243*B^4)*x^4*y^2+(25*G^2-90*B^2*G+81*B^4)*x^6)/16+((18*B^2*G-90*B^4)*x^2*y^4+(-(3*B^2*G)-81*B^4)*x^4*y^2+(15*B^2*G-27*B^4)*x^6)/2-((9*G^2-45*B^2*G)*x^4*y^2+(5*G^2-9*B^2*G)*x^6)/2)+((9*G^2-90*B^2*G+225*B^4)*y^6+(27*G^2-270*B^2*G+675*B^4)*x^2*y^4+(75*G^2-270*B^2*G+243*B^4)*x^4*y^2+(25*G^2-90*B^2*G+81*B^4)*x^6)/16+(3*(96*B^4*y^6+(-(78*B^2*G)-282*B^4)*x^2*y^4+(81*B^4-37*B^2*G)*x^4*y^2+(45*B^4-25*B^2*G)*x^6))/2+4*(-(48*B^4*y^6)+96*B^4*x^2*y^4-108*B^4*x^4*y^2-60*B^4*x^6)-6*b[1,5]*y^6+48*B^4*y^6+(36*b[0,6]-12*b[2,4])*x*y^5-((486*B^2*G-1086*B^4)*x^2*y^4+(729*B^2*G-1629*B^4)*x^4*y^2+(129*B^2*G-261*B^4)*x^6)/4-(3*((426*B^2*G-1170*B^4)*x^2*y^4+(359*B^2*G-675*B^4)*x^4*y^2+(215*B^2*G-435*B^4)*x^6))/4-((162*B^2*G-810*B^4)*x^2*y^4+(123*B^2*G-135*B^4)*x^4*y^2+(75*B^2*G-135*B^4)*x^6)/4-((18*B^2*G-90*B^4)*x^2*y^4+(-(3*B^2*G)-81*B^4)*x^4*y^2+(15*B^2*G-27*B^4)*x^6)/2+6*(48*B^2*G*x^2*y^4+32*B^2*G*x^4*y^2+20*B^2*G*x^6)+(30*b[1,5]-18*b[3,3])*x^2*y^4+(486*B^2*G-1086*B^4)*x^2*y^4+(162*B^2*G-810*B^4)*x^2*y^4+(18*B^2*G-90*B^4)*x^2*y^4-96*B^4*x^2*y^4+(24*b[2,4]-24*b[4,2])*x^3*y^3-2*((9*G^2-45*B^2*G)*x^4*y^2+(5*G^2-9*B^2*G)*x^6)+(18*b[3,3]-30*b[5,1])*x^4*y^2+(729*B^2*G-1629*B^4)*x^4*y^2+(123*B^2*G-135*B^4)*x^4*y^2+(-(3*B^2*G)-81*B^4)*x^4*y^2+108*B^4*x^4*y^2+(12*b[4,2]-36*b[6,0])*x^5*y+6*b[5,1]*x^6+(129*B^2*G-261*B^4)*x^6+(75*B^2*G-135*B^4)*x^6+(15*B^2*G-27*B^4)*x^6+60*B^4*x^6)));
+0;
+
+/* Problem 134 */
+(declare(A3,parameter),
+  homogeneous_polynomial_to_list(newf40/4!-A3*(x^2+y^2)^3/8,6,[x,y]));
+[-((16*A3-32*b[5,1]+55*G^2-570*B^2*G+579*B^4)/128),-((3*b[6,0]-b[4,2])/2),-((48*A3+160*b[5,1]-96*b[3,3]+69*G^2-3126*B^2*G+5841*B^4)/128),b[2,4]-b[4,2],-((48*A3+96*b[3,3]-160*b[1,5]-27*G^2-1674*B^2*G+3669*B^4)/128),-((b[2,4]-3*b[0,6])/2),-((16*A3+32*b[1,5]-9*G^2+90*B^2*G-225*B^4)/128)];
+
+/* Problem 135 */
+block([%rnum:0],
+  sol4:linsolve(%,listofparameters(%)));
+[b[5,1] = (19*G^2-60*B^2*G-63*B^4)/16,A3 = -((17*G^2-450*B^2*G+705*B^4)/16),b[4,2] = 3*%r1,b[6,0] = %r1,b[3,3] = (26*G^2-297*B^2*G+387*B^4)/12,b[2,4] = 3*%r1,b[1,5] = (13*G^2-270*B^2*G+465*B^4)/16,b[0,6] = %r1];
+
+/* Problem 136 */
+subst(subst(%r1=0,sol4),get(Wg,'hamiltonian));
+(((15*(13*G^2-270*B^2*G+465*B^4)*ϵ^3*x)/2+(486*B*G-1086*B^3)*ϵ^2)*y^5+(10*(26*G^2-297*B^2*G+387*B^4)*ϵ^3*x^3+(1215*B*G-2715*B^3)*ϵ^2*x^2+(225*B^2-45*G)*ϵ*x-80*B)*y^3+((15*(19*G^2-60*B^2*G-63*B^4)*ϵ^3*x^5)/2+(645*B*G-1305*B^3)*ϵ^2*x^4+(135*B^2-75*G)*ϵ*x^3-120*B*x^2)*y)/120;
+
+/* end */
+
+/* Problem 137 */
+add_maxima_symbol('gham);
+'done;
+
+/* Problem 138 */
+(
+  deprit_ali_wood(N) := block([sol,B,G,A,ratweights:[],poisson_bracket:'poisson_bracket_strict],
+    local(B,G,A),
+    reinit_deprit_new_f(),
+    declare([B,G],constant,ϵ,scalar,A,parameter),
+    define_graded_hamvf(F,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+    I : subst(ϵ=0,get(F,'hamiltonian)),
+    define_graded_hamvf(Gg,sum(ϵ^(2*k)*A[k+1]*I^(k+1)/(2*k)!,k,0,N),[x,y],ϵ,2*N),
+    sol:ezdnf(F,Gg,2*N,ϵ),
+    subst(second(sol),makelist(A[k],k,2,N+1))),
+  deprit_ali_wood(3) - ali_wood(8));
+[0,0,0];
+
+/* Problem 139 */
+(define_graded_hamvf:[],poisson_bracket:'poisson_bracket);
+poisson_bracket;
+
+/* Problem 140 */
+(kill(Hho,Fho,W,F,ϵ,Fho1,Fho2,Fho3,Fho4,a,b,c,B,G,ratweights), ratwtlvl:false, 'done);
+'done;
 /* end of rtest_bnf.mac */
