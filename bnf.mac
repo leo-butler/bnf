@@ -227,4 +227,215 @@ ezbnf(x,f,ratwtlvl,[φ]) :> block([X,n,d,f2,f2l,F,c,I,s,u,Σ,g,g2,a,δ],
 %%ezbnf(v,h,m,n,[s]) :> if m = n then ezbnf(v,h,m,last(s))
 else %%ezbnf(v,h,m+1,n,last(ezbnf(v,h,m,last(s))))$
 
+
+/* Lie Transforms
+*/
+
+canonical_poisson_structure(n) := genmatrix(lambda([i,j],kron_delta(i+n,j)-kron_delta(i,j+n)),2*n,2*n) $
+
+grad(H,x,[fun]) := block([∇H],
+  ∇H : map(lambda([v],diff(H,v)),x),
+  if fun=[] or first(fun)=false then ∇H else funmake(lambda,[x,∇H]));
+
+pgrad(H,x,[opts]) := block([vf,n,ps,fun],
+  n:length(x)/2,
+  if opts=[] then (fun:false, ps:canonical_poisson_structure(n))
+  else if length(opts)=1 then (fun:first(opts), ps:canonical_poisson_structure(n))
+  else (fun:first(opts), ps:second(opts)),
+  vf : ps . matrix(grad(H,x)),
+  vf : flatten(args(vf)),
+  if not(fun) then vf else funmake(lambda,[x,vf]));
+
+add_maxima_symbol('[grad,sgrad,pgrad,gradfun,pgradfun,poisson_structure,coordinates,hamvf,hamiltonian,hamiltonianfun,Λ,hamiltonians,define_hamvf_hooks]) $
+define_variable(define_hamvf_hooks,[],listp)$
+remarray(hamiltonians);
+hamiltonians[H] := false;
+define_hamvf(Hsym,Hexpr,x,[Poisson_structure]) :> block([n,ps],
+  if not(define_hamvf_hooks=[]) then for func in define_hamvf_hooks do Hexpr:apply(func,[Hexpr]),
+  n:length(x)/2,
+  ps:if Poisson_structure=[] then canonical_poisson_structure(n) else first(Poisson_structure),
+  put(Hsym,Hexpr,'hamiltonian),
+  put(Hsym,funmake(lambda,[x,Hexpr]),'hamiltonianfun),
+  put(Hsym,pgrad(Hexpr,x,false,ps),'pgrad),
+  put(Hsym,grad(Hexpr,x),'grad),
+  put(Hsym,ps,'poisson_structure),
+  put(Hsym,pgrad(Hexpr,x,true,ps),'pgradfun),
+  put(Hsym,grad(Hexpr,x,true,ps),'gradfun),
+  put(Hsym,x,'coordinates),
+  put(Hsym,true,'hamvf),
+  put(Hsym,false,'updated),
+  hamiltonians[Hsym]:Hexpr,
+  Hsym);
+update_hamiltonians(updates) :> block([hams],
+  hams:map(first,rest(arrayinfo(hamiltonians),2)),
+  for ham in hams do (
+    if true then (
+      define_hamvf(ham,lratsubst(updates,get(ham,'hamiltonian)),get(ham,'coordinates),get(ham,'poisson_structure)),
+      put(ham,true,'updated))));
+
+print_array(A) :> block([keys,l], keys:rest(apply('arrayinfo,[A]),2),
+  l:if keys=[] then '[empty] else makelist([first(k),arrayapply(A,k)],k,keys),
+  printf(true,"~{~a~^~%~}",l), 'done);
+
+add_maxima_symbol('[canonical_coordinates,poisson_bracket_strict,poisson_bracket]);
+safe_op(x) :> if not(atom(x)) then op(x);
+poisson_bracket_strict(Hsym,Fsym) :> block([pb,lst:gensym("list_"),sub,isub,pbs],
+  sub:["["=lst,"+"="["],
+  isub:["["="+",lst="["],
+  pbs:[pb=poisson_bracket_strict],
+  if constantp(Hsym) or constantp(Fsym) then 0
+  else if hamiltonianp(Hsym) and hamiltonianp(Fsym) then define_hamvf(concat(Hsym,'_,Fsym),collecttermsl(ratexpand(get(Hsym,'grad) . get(Fsym,'pgrad)),get(Hsym,'coordinates)),get(Hsym,'coordinates))
+  else if safe_op(Hsym)="+" and safe_op(Fsym)="+" then
+  subst(pbs,
+    expand_poisson_bracket(
+      subst(isub,
+        outermap(pb,
+          subst(sub,expand_poisson_bracket(Hsym,poisson_bracket_strict,false)),
+          subst(sub,expand_poisson_bracket(Fsym,poisson_bracket_strict,false)))),pb,false))
+  else if safe_op(Hsym)="+" then
+  subst(pbs,
+    expand_poisson_bracket(
+      subst(isub,
+        map(lambda([s],pb(s,Fsym)),
+          subst(sub,expand_poisson_bracket(Hsym,poisson_bracket_strict,false)))),pb,false))
+  else if safe_op(Fsym)="+" then
+  subst(pbs,
+    expand_poisson_bracket(
+      subst(isub,
+        map(lambda([s],pb(Hsym,s)),
+          subst(sub,expand_poisson_bracket(Fsym,poisson_bracket_strict,false)))),pb,false))
+  else if member(safe_op(Hsym),["-","*","/"]) or member(safe_op(Fsym),["-","*","/"]) then
+  subst(pbs,expand_poisson_bracket(pb(Hsym,Fsym),pb,false))
+  else if hamiltonianp(Hsym) then poisson_bracket_strict(Hsym,define_hamvf(gensym("FHamiltonian_"),Fsym,get(Hsym,'coordinates)))
+  else if hamiltonianp(Fsym) then poisson_bracket_strict(define_hamvf(gensym("HHamiltonian_"),Hsym,get(Fsym,'coordinates)),Fsym)
+  else if listp(canonical_coordinates) then poisson_bracket_strict(define_hamvf(gensym("HHamiltonian_"),Hsym,canonical_coordinates),define_hamvf(gensym("FHamiltonian_"),Fsym,canonical_coordinates))
+  else funmake(nounify(poisson_bracket_strict),[Hsym,Fsym]));
+poisson_bracket(Hsym,Fsym) :> block([res],
+  res:poisson_bracket_strict(Hsym,Fsym),
+  if hamiltonianp(res) then get(res,'hamiltonian) else funmake(nounify(poisson_bracket),[Hsym,Fsym]));
+texput(nounify(poisson_bracket),lambda([expr], block([x:args(expr)], printf(false,"\\{~a,~a\\}",tex1(first(x)),tex1(second(x))))));
+texput(nounify(poisson_bracket_strict),lambda([expr], block([x:args(expr)], printf(false,"\\{~a,~a\\}",tex1(first(x)),tex1(second(x))))));
+
+add_maxima_symbol('[Λ,ϵ,poisson_bracket,forget_Λ,POISSON_BRACKET]) $
+remarray(Λ);
+Λ[w,f] := [];
+forget_Λ : false;
+%Λ(w,f,n,ϵ) :> block([fk,fk1,L,l,ham,ham1],
+  L:Λ[w,f], l:if forget_Λ then 0 else length(L),
+  if l>n then part(L,l-n) else (
+    if l=0 then (Λ[w,f] : [f], fk1:f, l:1)
+    else fk1:first(Λ[w,f]),
+    for k:l thru n do (
+      fk:concat(w,'_,f,'_,k),
+      ham1:expand_poisson_bracket(fk1,poisson_bracket),
+      ham:apply(poisson_bracket,[fk1,w]) + diff(ham1,ϵ),
+      ham:ratexpand_poisson_bracket(ham,poisson_bracket,ϵ,ratwtlvl),
+      define_hamvf(fk,ham,get(f,'coordinates)),
+      Λ[w,f] : cons(fk,Λ[w,f]),
+      fk1:fk),
+    first(Λ[w,f])))$
+%Λ₀(w,f,n,ϵ,[pb]) :> block(
+  pb:if pb=[] then 'poisson_bracket else first(pb),
+  subst(ϵ=0,expand_poisson_bracket(apply1(%Λ(w,f,n,ϵ),coerce2hamiltonian),pb)));
+Λ(w,f,[opts]) :> block([ϵ,n],
+  if opts=[] then (ϵ:'ϵ, n:1)
+  else if length(opts)=1 then (n:first(opts), ϵ:'ϵ)
+  else (n:first(opts), ϵ:second(opts)),
+  %Λ(w,f,n,ϵ));
+%expΛ(w,f,n,ϵ) :> define_hamvf(concat('exp,'_,w,'_,f,'_,n),sum(%Λ₀(w,f,k,ϵ)*ϵ^k/k!,k,0,n),get(f,'coordinates)) $
+expΛ(w,f,[opts]) :> block([ϵ,n],
+  if opts=[] then (ϵ:'ϵ, n:0)
+  else if length(opts)=1 then (n:first(opts), ϵ:'ϵ)
+  else (n:first(opts), ϵ:second(opts)),
+  %expΛ(w,f,n,ϵ));
+hamiltonianp(expr) :> is(symbolp(expr) and get(expr,'hamvf));
+matchdeclare(HAMILTONIAN,hamiltonianp);
+defrule(coerce2hamiltonian,HAMILTONIAN,get(HAMILTONIAN,'hamiltonian));
+add_maxima_symbol('coerce2hamiltonian);
+deprit_transformation(newf,w,f,n,ϵ) :> define_hamvf(newf,taylor(apply1(expΛ(w,f,n,ϵ),coerce2hamiltonian),ϵ,0,n),get(f,'coordinates));
+expand_poisson_bracket(expr,pb,[coerce]) :> (coerce:is(coerce=[]),
+  expr:if coerce=true then apply1(expr,coerce2hamiltonian) else expr,
+  if hamiltonianp(expr) then expand_poisson_bracket(expr,pb)
+  else block([dotassoc:false, dotscrules:true, dotop:gensym("dotop_")], subst(["."=pb,dotop="."],expand(subst(["."=dotop,pb="."],expr)))));
+ratexpand_poisson_bracket(expr,pb,ϵ,ratwtlvl) :> collectterms(ratexpand(expand_poisson_bracket(expr,pb)),ϵ) $
+declare(poisson_bracket,feature);
+declare(poisson_bracket,poisson_bracket);
+poisson_bracket_p(pb) := is(symbolp(pb) and featurep(pb,poisson_bracket));
+matchdeclare(POISSON_BRACKET,poisson_bracket_p);
+defrule(coercepb,POISSON_BRACKET,lambda([f,g],print(HERE),diff(f,x)*diff(g,y)-diff(f,y)*diff(g,x)));
+
+add_maxima_symbol('graded_hamiltonian);
+define_graded_hamvf(Hsym,Hexpr,x,ϵ,n,[Poisson_structure]) :> block([Ht,ps,Hsymt],
+    ps:if Poisson_structure=[] then canonical_poisson_structure(length(x)/2) else first(Poisson_structure),
+    define_hamvf(Hsym,Hexpr,x,ps),
+    Ht : collectterms(ratexpand(taylor(Hexpr,ϵ,0,n)),ϵ),
+    Ht : reverse(map(first,polynomial_to_list(Ht,n,[ϵ]))),
+    Hsymt : makelist(concat(Hsym,'_,k),k,0,length(Ht)-1),
+    for k:1 thru length(Ht) do (
+      Ht[k] : Ht[k]*(k-1)!,
+      define_hamvf(Hsymt[k],Ht[k],x)),
+    put(Hsym,Hsymt,'graded_hamiltonian),
+    Hsym);
+
+safe_get(atm,pty) :> if symbolp(atm) then get(atm,pty);
+graded_hamiltonian_part(f,n) :> block([l:get(f,'graded_hamiltonian)], if length(l)>=n then part(l,n) else 0);
+reinit_deprit_new_f() := block(
+  remarray(deprit_new_f),
+  remarray(deprit_new_f2),
+  remarray(hamiltonians),
+  deprit_new_f[w,f,k,n] :> if k=0 then graded_hamiltonian_part(f,n+1) 
+  else block([res],
+    res:deprit_new_f[w,f,k-1,n+1] + sum(binomial(n,m)*apply(poisson_bracket,[deprit_new_f[w,f,k-1,n-m],graded_hamiltonian_part(w,m+1)]),m,0,n),
+    ev(res,infeval)),
+  deprit_new_f2[w,f,k,n] :> if k=0 then graded_hamiltonian_part(f,n+1) 
+  else block([res],
+    res:deprit_new_f2[w,f,k-1,n+1] + sum(binomial(n,m)*apply(poisson_bracket,[deprit_new_f2[w,f,k-1,n-m],graded_hamiltonian_part(w,m+1)]),m,0,n),
+    res:ev(res,infeval),
+    define_hamvf(concat('new,'_,f,'_,w,'_,k,'_,n),rat(apply1(res,coerce2hamiltonian)),get(f,'coordinates),get(f,'poisson_structure))));
+deprit_new_f(w,f,k,n) :> deprit_new_f[w,f,k,n];
+deprit_new_f2(w,f,k,n) :> deprit_new_f2[w,f,k,n];
+reinit_deprit_new_f();
+
+%deprit_lie_transform(w,f,n,ϵ) :> sum(ϵ^k/k! * deprit_new_f(w,f,k,0), k, 0, n);
+deprit_lie_transform(w,f,n,ϵ) :> define_graded_hamvf(concat('exp,'_,w,'_,f,'_,n),%deprit_lie_transform(w,f,n,ϵ),get(f,'coordinates),ϵ,n);
+
+add_maxima_symbol('dcoerce2ham);
+dcoerce2ham(expr) :> if hamiltonianp(expr) then get(expr,'hamiltonian) else if atom(expr) then expr else if member(op(expr),["+","*","-","/"]) then map(dcoerce2ham,expr) else expr;
+ezdnf(f,g,n,ϵ) := block([poisson_bracket:poisson_bracket_strict,%rnum:0,ratweights:[],sk:[],sol:[],canonical_coordinates:get(f,'coordinates),fk,set_to_zero,debug:false],
+  ratweight(ϵ,1),
+  safe_length:lambda([x], if atom(x) then 0 else length(x)),
+  debug_print:lambda([[x]],if debug=true then apply('print,x)),
+  set_to_zero:lambda([l],map(lambda([x],x=0),l)),
+  print_time:lambda([],    endtime:elapsed_run_time(), print('time,endtime-starttime), starttime:endtime),
+  grham:get(g,'graded_hamiltonian),
+  Wham:homogeneous_polynomial(canonical_coordinates,3),
+  /*Wtr:'Wtr0,*/
+  starttime:elapsed_run_time(),
+  endtime:starttime,
+  define_graded_hamvf(Wtr,Wham,canonical_coordinates,ϵ,0),
+  for k:1 thru n do (
+    print("k=",k),
+    %rnum:0,
+    update_hamiltonians(sol),
+    gham:lratsubst(sol,get(grham[k+1],'hamiltonian)),
+    print_time(),
+    fk:deprit_new_f2(Wtr,f,k,0),
+    debug_print('k,k,'fk,fk),
+    print_time(),
+    fk:get(fk,'hamiltonian),
+    debug_print('fk,fk),
+    /*
+    eqs:homogeneous_polynomial_to_list(fk/k!-gham,2+k,canonical_coordinates),
+    params:listofparameters(eqs),
+    sk:linsolve(eqs,params),
+    */
+    sk:solve_for_parameters1(fk/k!-gham,2+k),
+    sk:lratsubst(set_to_zero(%rnum_list),sk),
+    sol:append(sk,sol),
+    print_time(),
+    Wtr0:Wtr, /*Wtr:concat('Wtr,k),*/
+    if k<n then define_graded_hamvf(Wtr,lratsubst(sk,get(Wtr0,'hamiltonian))+ϵ^k/k!*homogeneous_polynomial(canonical_coordinates,3+k),canonical_coordinates,ϵ,k)
+    ),
+  [Wtr,sol]);
+
 /* end of bnf.mac */
