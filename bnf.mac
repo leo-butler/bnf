@@ -50,13 +50,8 @@ listof(e,p) :> block([listconstvars:true], sublist(listofvars(e),p)) $
 listofparameters(e) :> listof(e,parameterp) $
 listofindeterminates(e) :> listof(e,lambda([x], not(parameterp(x) or constantp(x) or member(x,%rnum_list)))) $
 
-monomials(v,n) :> block([vn,vl,v1],
-  if v=[] then return([1]),
-  if mapatom(v) then return([v^n]) else if length(v)=1 then return(v^n),
-  vp:subst("["="+",v), vl:subst("+"="[",v),
-  vn:subst("+"="[", ratexpand(vp^n)),
-  v1:psubst(map(lambda([x], x=1),vl),vn),
-  map("/",vn,v1));
+%monomials(v,n) :> if length(v)=1 then v^n else flatten(makelist(v[1]^k*%monomials(rest(v),n-k),k,0,n));
+monomials(v,n) :> if v=[] then [1] else if mapatom(v) then [v^n] else if length(v)=1 then v^n else if op(v)#"[" then monomials(subst(op(v)="[",v),n) else reverse(%monomials(v,n));
 
 remove_rnums(e) :> zero_by_p(lambda([x],member(x,%rnum_list)),e) $
 
