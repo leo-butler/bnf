@@ -72,5 +72,5 @@ This package requires:
 To compute my email address, evaluate the following in Maxima:
 
 #+begin_src maxima :exports code :results none
-  printf(true,"~{~c~}",[108,101,111,46,98,117,116,108,101,114,64,117,109,97,110,105,116,111,98,97,46,99,97]);
+  printf(true,"~{~a~}",map(ascii,[108,101,111,46,98,117,116,108,101,114,64,117,109,97,110,105,116,111,98,97,46,99,97]));
 #+end_src
