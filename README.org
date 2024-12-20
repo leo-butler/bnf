@@ -2,7 +2,6 @@
 #+AUTHOR: Leo Butler
 #+EMAIL: leo.butler@umanitoba.ca
 #+OPTIONS: toc:t num:nil ^:{}
-#+MACRO: mathjax @@html:<script type="math/tex">$1</script>@@
 
 * Description
 [[https://github.com/leo-butler/bnf.git][BNF.MAC]] is a package to compute the normal form of a hamiltonian
@@ -18,7 +17,7 @@ Load and run the testsuite:
 #+end_src
 
 Compute the second-order Birkhoff normal form of the hamiltonian
-{{{mathjax(\[ H=B q³/3 + (q² + p²)/2. \])}}}
+\[ H=B q³/3 + (q² + p²)/2. \]
 
 #+begin_src maxima :exports code :results none
 (%i3) declare(B,constant) $
