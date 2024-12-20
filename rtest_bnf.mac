@@ -790,14 +790,128 @@ block([%rnum:0],
 /* Problem 136 */
 subst(subst(%r1=0,sol4),get(Wg,'hamiltonian));
 (((15*(13*G^2-270*B^2*G+465*B^4)*ϵ^3*x)/2+(486*B*G-1086*B^3)*ϵ^2)*y^5+(10*(26*G^2-297*B^2*G+387*B^4)*ϵ^3*x^3+(1215*B*G-2715*B^3)*ϵ^2*x^2+(225*B^2-45*G)*ϵ*x-80*B)*y^3+((15*(19*G^2-60*B^2*G-63*B^4)*ϵ^3*x^5)/2+(645*B*G-1305*B^3)*ϵ^2*x^4+(135*B^2-75*G)*ϵ*x^3-120*B*x^2)*y)/120;
-
 /* end */
 
+/* Diagonalization */
+
 /* Problem 137 */
+block([F,W,ϵ,ratweights:[],poisson_bracket:'poisson_bracket_strict,b,a,N:10],
+  ratweight(ϵ,1),
+  declare([a,b],parameter),
+  reinit_deprit_new_f(),
+  define_graded_hamvf(F,(x^2+y^2)/2+ϵ*x*y,[x,y],ϵ,1),
+  I:get(F_0,'hamiltonian),
+  a[1]:1,
+  define_graded_hamvf(G,sum(ϵ^(2*i-2)*a[i]*I/((2*i-2)!),i,1,floor(N/2)),[x,y],ϵ,N),
+  define_graded_hamvf(W,sum(ϵ^m*sum(b[m,k]*x^k*y^(2-k),k,0,2),m,0,N),[x,y],ϵ,N),
+  apply1(deprit_new_f[W,F,1,0],coerce2hamiltonian));
+-(b[0,1]*y^2)+(2*b[0,0]-2*b[0,2])*x*y+x*y+b[0,1]*x^2;
+
+/* Problem 138 */
+homogeneous_polynomial_to_list(%,2,[x,y]);
+[b[0,1],-(2*b[0,2])+2*b[0,0]+1,-b[0,1]];
+
+/* Problem 139 */
+block([%rnum:0],
+  sol1:linsolve(%,listofparameters(%)));
+[b[0,1] = 0,b[0,0] = (2*%r1-1)/2,b[0,2] = %r1];
+
+/* Problem 140 */
+block([F,W,ϵ,ratweights:[],poisson_bracket:'poisson_bracket_strict,b,N:10],
+  reinit_deprit_new_f(),
+  define_graded_hamvf(W,subst(subst(%r1=0,sol1),get(W,'hamiltonian)),[x,y],ϵ,N),
+  apply1(deprit_new_f[W,F,2,0] - graded_hamiltonian_part(G,2+1),coerce2hamiltonian));
+-((a[2]*y^2+a[2]*x^2)/2)-b[1,1]*y^2-y^2+(2*b[1,0]-2*b[1,2])*x*y+b[1,1]*x^2;
+
+/* Problem 141 */
+homogeneous_polynomial_to_list(%,2,[x,y]);
+[-((a[2]-2*b[1,1])/2),2*b[1,0]-2*b[1,2],-((a[2]+2*b[1,1]+2)/2)];
+
+/* Problem 142 */
+block([%rnum:0],
+  sol2:linsolve(%,listofparameters(%)),
+  sol:append(sol1,sol2),sol2);
+[b[1,1] = -(1/2),a[2] = -1,b[1,0] = %r1,b[1,2] = %r1];
+
+/* Problem 143 */
+block([F,G,W,ϵ,ratweights:[],poisson_bracket:'poisson_bracket_strict,b,I,N:10],
+  reinit_deprit_new_f(),
+  define_graded_hamvf(W,subst(subst(%r1=0,sol),get(W,'hamiltonian)),[x,y],ϵ,N),
+  apply1(deprit_new_f[W,F,3,0],coerce2hamiltonian));
+-(2*b[2,1]*y^2)+(4*b[2,0]-4*b[2,2])*x*y+2*x*y+2*b[2,1]*x^2;
+
+/* Problem 144 */
+homogeneous_polynomial_to_list(%,2,[x,y]);
+[2*b[2,1],-(4*b[2,2])+4*b[2,0]+2,-(2*b[2,1])];
+
+/* Problem 145 */
+block([%rnum:0],
+  sol3:linsolve(%,listofparameters(%)),
+  sol:append(sol,sol3),sol3);
+[b[2,1] = 0,b[2,0] = (2*%r1-1)/2,b[2,2] = %r1];
+
+/* Problem 146 */
+block([F,W,ϵ,ratweights:[],poisson_bracket:'poisson_bracket_strict,b,N:10],
+  reinit_deprit_new_f(),
+  define_graded_hamvf(W,subst(subst(%r1=0,sol3),get(W,'hamiltonian)),[x,y],ϵ,N),
+  collecttermsl(ratexpand(apply1(deprit_new_f[W,F,4,0] - graded_hamiltonian_part(G,4+1),coerce2hamiltonian)),[x,y]));
+(-(6*b[3,1])-a[3]/2-9/2)*y^2+(12*b[3,0]-12*b[3,2])*x*y+(6*b[3,1]-a[3]/2+3/2)*x^2;
+
+/* Problem 147 */
+homogeneous_polynomial_to_list(%,2,[x,y]);
+[(12*b[3,1]-a[3]+3)/2,12*b[3,0]-12*b[3,2],-((12*b[3,1]+a[3]+9)/2)];
+
+/* Problem 148 */
+block([%rnum:0],
+  sol4:linsolve(%,listofparameters(%)),
+  sol:append(sol,sol4),sol4);
+[a[3] = -3,b[3,1] = -(1/2),b[3,0] = %r1,b[3,2] = %r1];
+/* end */
+
+/* Diagonalization: Take Two */
+
+/* Problem 149 */
+(diagH(N) := block([F,W,ϵ,ratweights:[],poisson_bracket:'poisson_bracket_strict,b,a,debug:false],
+    safe_length:lambda([x], if atom(x) then 0 else length(x)),
+    debug_print:lambda([[x]],if debug=true then apply('print,x)),
+    set_to_zero:lambda([l],map(lambda([x],x=0),l)),
+    times:makelist(0,k,1,N),
+    print_time:lambda([k],    endtime:elapsed_run_time(), times[k]:endtime-starttime, print('time,endtime-starttime), starttime:endtime),
+    ratweight(ϵ,1),
+    declare([a,b],parameter),
+    reinit_deprit_new_f(),
+    define_graded_hamvf(F,(x^2+y^2)/2+ϵ*x*y,[x,y],ϵ,1),
+    I:get(F_0,'hamiltonian),
+    define_graded_hamvf(G,sum(ϵ^(2*i-2)*a[i]*I,i,1,1+floor(N/2)),[x,y],ϵ,N),
+    grham:get(G,'graded_hamiltonian),
+    define_graded_hamvf(W,sum(ϵ^m*if evenp(m) then b[m]*x^2 else b[m]*x*y,m,0,N-1),[x,y],ϵ,N),
+    sol:[a[1]=1], %rnum:0,
+    starttime:elapsed_run_time(),
+    for k:1 thru N do (
+      print("k=",k),
+      gham:lratsubst(sol,get(grham[k+1],'hamiltonian)),
+      fk:deprit_new_f2(W,F,k,0),
+      debug_print('k,k,'fk,fk,'gham,gham),
+      fk:get(fk,'hamiltonian),
+      debug_print('fk,fk),
+      sk:solve_for_parameters1(fk-gham,2),
+      sk:lratsubst(set_to_zero(%rnum_list),sk),
+      sol:append(sk,sol),
+      define_graded_hamvf(W,subst(sol,sum(ϵ^m*if evenp(m) then b[m]*x^2 else b[m]*x*y,m,0,N-1)),[x,y],ϵ,N),
+      debug_print('W,get(W,'hamiltonian)),
+      update_hamiltonians(sol),
+      print_time(k)
+      ),
+    [W,sol]),
+  diagH(22),
+  ratexpand(taytorat(get(G,'hamiltonianfun)(sqrt(2),0) - taylor(sqrt(1-ϵ^2),ϵ,0,22))));
+0;
+
+/* Problem 150 */
 add_maxima_symbol('gham);
 'done;
 
-/* Problem 138 */
+/* Problem 151 */
 (
   deprit_ali_wood(N) := block([sol,B,G,A,ratweights:[],poisson_bracket:'poisson_bracket_strict],
     local(B,G,A),
