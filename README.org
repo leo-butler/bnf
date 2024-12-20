@@ -17,9 +17,8 @@ Load and run the testsuite:
 #+end_src
 
 Compute the second-order Birkhoff normal form of the hamiltonian
-#+begin_html
+
 $$ H=B q³/3 + (q² + p²)/2. $$
-#+end_html
 
 #+begin_src maxima :exports code :results none
 (%i3) declare(B,constant) $
@@ -44,11 +43,11 @@ $$ H₂=I₁-5 B² I₁²/12. $$
 
 The remaining elements in the list =%o4= are
 
-- $I₁$, the quadratic part of \(H\);
-- a list of parameters used to solve for the generating function \(φ\) and \(H₂\);
+- $I₁$, the quadratic part of $H$;
+- a list of parameters used to solve for the generating function $φ$ and $H₂$;
 - a check sum, which should be =0=;
-- \(H₂\) in mixed variables;
-- the generating function \(φ\) of the transformation from \(H\) to \(H₂\).
+- $H₂$ in mixed variables;
+- the generating function $φ$ of the transformation from $H$ to $H₂$.
 
 
 For a longer set of examples, see the [[https://github.com/leo-butler/bnf/blob/master/rtest_bnf.mac][rtest_bnf.mac]] file.
