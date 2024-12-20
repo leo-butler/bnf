@@ -2,6 +2,7 @@
 #+AUTHOR: Leo Butler
 #+EMAIL: leo.butler@umanitoba.ca
 #+OPTIONS: toc:t num:nil ^:{}
+#+HTML_HEAD: <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 * Description
 [[https://github.com/leo-butler/bnf.git][BNF.MAC]] is a package to compute the normal form of a hamiltonian
