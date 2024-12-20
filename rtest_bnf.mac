@@ -925,11 +925,125 @@ add_maxima_symbol('gham);
   deprit_ali_wood(3) - ali_wood(8));
 [0,0,0];
 
-/* Problem 139 */
+/* Problem 152 */
 (define_graded_hamvf:[],poisson_bracket:'poisson_bracket);
 poisson_bracket;
 
-/* Problem 140 */
+/* Problem 153 */
+poisson_bracket:'pb;
+'pb;
+
+/* Problem 154 */
+block([N:5],
+  declare([b,ϵ],scalar),
+  reinit_hori_new_f(),
+  define_graded_hamvf(F,sum(f[k]*ϵ^k/k!,k,0,N),[x,y],ϵ,N),
+  define_graded_hamvf(W,sum(w[k+1]*ϵ^k/k!,k,0,N),[x,y],ϵ,N),
+  hori_new_f[W,F,0]);
+F_0;
+
+/* Problem 155 */
+hori_new_f1[W,F,1,0];
+pb(F_0,W_0);
+
+/* Problem 156 */
+expand_poisson_bracket(%,pb);
+pb(f[0],w[1]);
+
+/* Problem 157 */
+hori_new_f[W,F,1];
+F_1+pb(F_0,W_0);
+
+/* Problem 158 */
+hori_new_f1[W,F,0,2];
+F_2;
+
+/* Problem 159 */
+hori_new_f1[W,F,1,1];
+pb(F_1,W_0)+pb(F_0,W_1);
+
+/* Problem 160 */
+hori_new_f1[W,F,2,0];
+pb(pb(F_0,W_0),W_0);
+
+/* Problem 161 */
+hori_new_f[W,F,2];
+F_2+2*(pb(F_1,W_0)+pb(F_0,W_1))+pb(pb(F_0,W_0),W_0);
+
+/* Problem 162 */
+expand_poisson_bracket(%,pb);
+pb(pb(f[0],w[1]),w[1])+2*pb(f[1],w[1])+2*pb(f[0],w[2])+f[2];
+
+/* Problem 163 */
+hori_new_f1[W,F,0,3];
+F_3;
+
+/* Problem 164 */
+hori_new_f1[W,F,1,2];
+pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2);
+
+/* Problem 165 */
+hori_new_f1[W,F,2,1];
+pb(pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(pb(F_0,W_0),W_1);
+
+/* Problem 166 */
+hori_new_f1[W,F,3,0];
+pb(pb(pb(F_0,W_0),W_0),W_0);
+
+/* Problem 167 */
+hori_new_f[W,F,3];
+F_3+3*(pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2))+3*(pb(pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(pb(F_0,W_0),W_1))+pb(pb(pb(F_0,W_0),W_0),W_0);
+
+/* Problem 168 */
+expand_poisson_bracket(%,pb);
+pb(pb(pb(f[0],w[1]),w[1]),w[1])+3*pb(pb(f[1],w[1]),w[1])+3*pb(pb(f[0],w[2]),w[1])+3*pb(pb(f[0],w[1]),w[2])+3*pb(f[2],w[1])+6*pb(f[1],w[2])+3*pb(f[0],w[3])+f[3];
+
+/* Problem 169 */
+makelist(hori_new_f1[W,F,k,4-k],k,0,4);
+[F_4,pb(F_3,W_0)+3*pb(F_2,W_1)+3*pb(F_1,W_2)+pb(F_0,W_3),pb(pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+2*pb(pb(F_1,W_0)+pb(F_0,W_1),W_1)+pb(pb(F_0,W_0),W_2),pb(pb(pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(pb(F_0,W_0),W_1),W_0)+pb(pb(pb(F_0,W_0),W_0),W_1),pb(pb(pb(pb(F_0,W_0),W_0),W_0),W_0)];
+
+/* Problem 170 */
+expand_poisson_bracket(%,pb);
+[f[4],pb(f[3],w[1])+3*pb(f[2],w[2])+3*pb(f[1],w[3])+pb(f[0],w[4]),pb(pb(f[2],w[1]),w[1])+2*pb(pb(f[1],w[2]),w[1])+2*pb(pb(f[1],w[1]),w[2])+pb(pb(f[0],w[3]),w[1])+2*pb(pb(f[0],w[2]),w[2])+pb(pb(f[0],w[1]),w[3]),pb(pb(pb(f[1],w[1]),w[1]),w[1])+pb(pb(pb(f[0],w[2]),w[1]),w[1])+pb(pb(pb(f[0],w[1]),w[2]),w[1])+pb(pb(pb(f[0],w[1]),w[1]),w[2]),pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1])];
+
+/* Problem 171 */
+hori_new_f[W,F,4];
+F_4+4*(pb(F_3,W_0)+3*pb(F_2,W_1)+3*pb(F_1,W_2)+pb(F_0,W_3))+6*(pb(pb(F_2,W_0)+2*pb(F_1,W_1)+pb(F_0,W_2),W_0)+2*pb(pb(F_1,W_0)+pb(F_0,W_1),W_1)+pb(pb(F_0,W_0),W_2))+4*(pb(pb(pb(F_1,W_0)+pb(F_0,W_1),W_0)+pb(pb(F_0,W_0),W_1),W_0)+pb(pb(pb(F_0,W_0),W_0),W_1))+pb(pb(pb(pb(F_0,W_0),W_0),W_0),W_0);
+
+/* Problem 172 */
+expand_poisson_bracket(%,pb);
+pb(pb(pb(pb(f[0],w[1]),w[1]),w[1]),w[1])+4*pb(pb(pb(f[1],w[1]),w[1]),w[1])+4*pb(pb(pb(f[0],w[2]),w[1]),w[1])+4*pb(pb(pb(f[0],w[1]),w[2]),w[1])+4*pb(pb(pb(f[0],w[1]),w[1]),w[2])+6*pb(pb(f[2],w[1]),w[1])+12*pb(pb(f[1],w[2]),w[1])+12*pb(pb(f[1],w[1]),w[2])+6*pb(pb(f[0],w[3]),w[1])+12*pb(pb(f[0],w[2]),w[2])+6*pb(pb(f[0],w[1]),w[3])+4*pb(f[3],w[1])+12*pb(f[2],w[2])+12*pb(f[1],w[3])+4*pb(f[0],w[4])+f[4];
+
+/* Problem 173 */
+(
+  hori_ali_wood(N) := block([sol,B,G,A,ratweights:[],poisson_bracket:'poisson_bracket_strict],
+    local(B,G,A),
+    reinit_hori_new_f(),
+    declare([B,G],constant,ϵ,scalar,A,parameter),
+    define_graded_hamvf(F,(x^2+y^2)/2+ϵ*B*x^3+ϵ^2*G*x^4/2,[x,y],ϵ,2),
+    I : subst(ϵ=0,get(F,'hamiltonian)),
+    define_graded_hamvf(Gg,sum(ϵ^(2*k)*A[k+1]*I^(k+1)/(2*k)!,k,0,N),[x,y],ϵ,2*N),
+    sol:ezhnf(F,Gg,2*N,ϵ),
+    subst(second(sol),makelist(A[k],k,2,N+1))),
+  hori_ali_wood(3) - ali_wood(8));
+[0,0,0];
+
+/* Problem 174 */
+/* use τ in place of ϵ */
+(
+  hori_ali_wood(N) := block([sol,B,G,A,ratweights:[],poisson_bracket:'poisson_bracket_strict],
+    local(B,G,A),
+    reinit_hori_new_f(),
+    declare([B,G],constant,τ,scalar,A,parameter),
+    define_graded_hamvf(F,(x^2+y^2)/2+τ*B*x^3+τ^2*G*x^4/2,[x,y],τ,2),
+    I : subst(τ=0,get(F,'hamiltonian)),
+    define_graded_hamvf(Gg,sum(τ^(2*k)*A[k+1]*I^(k+1)/(2*k)!,k,0,N),[x,y],τ,2*N),
+    sol:ezhnf(F,Gg,2*N,τ),
+    subst(second(sol),makelist(A[k],k,2,N+1))),
+  hori_ali_wood(3) - ali_wood(8));
+[0,0,0];
+
+/* Problem 175 */
 (kill(Hho,Fho,W,F,ϵ,Fho1,Fho2,Fho3,Fho4,a,b,c,B,G,ratweights), ratwtlvl:false, 'done);
 'done;
 /* end of rtest_bnf.mac */
