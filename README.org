@@ -40,7 +40,7 @@ i= 4
 
 Which gives
 
-\[ H₂=I₁-5 B² I₁²/12. \]
+$$ H₂=I₁-5 B² I₁²/12. $$
 
 The remaining elements in the list =%o4= are
 
