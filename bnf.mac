@@ -437,5 +437,36 @@ ezdnf(f,g,n,ϵ) := block([poisson_bracket:poisson_bracket_strict,%rnum:0,ratweig
     if k<n then define_graded_hamvf(Wtr,lratsubst(sk,get(Wtr0,'hamiltonian))+ϵ^k/k!*homogeneous_polynomial(canonical_coordinates,3+k),canonical_coordinates,ϵ,k)
     ),
   [Wtr,sol]);
+ezdnf(f,g,n,ϵ) := ezdhnf(f,g,n,ϵ,'deprit_new_f2);
+
+/* Hori */
+reinit_hori_new_f() := block(
+  remarray(hori_new_f1),
+  remarray(hori_new_f12),
+  remarray(hori_new_f),
+  remarray(hori_new_f2),
+  /*remarray(hamiltonians),*/
+  hori_new_f1[w,f,k,n] :> if k=0 then graded_hamiltonian_part(f,n+1) 
+  else block([res],
+    res:sum(binomial(n,m)*apply(poisson_bracket,[hori_new_f1[w,f,k-1,n-m],graded_hamiltonian_part(w,m+1)]),m,0,n),
+    ev(res,infeval)),
+  hori_new_f12[w,f,k,n] :> if k=0 then graded_hamiltonian_part(f,n+1) 
+  else block([res],
+    res:sum(binomial(n,m)*apply(poisson_bracket,[hori_new_f12[w,f,k-1,n-m],graded_hamiltonian_part(w,m+1)]),m,0,n),
+    res:ev(res,infeval),
+    define_hamvf(concat('new12,'_,f,'_,w,'_,k,'_,n),rat(apply1(res,coerce2hamiltonian)),get(f,'coordinates),get(f,'poisson_structure))),
+  hori_new_f[w,f,n] :> sum(binomial(n,m)*hori_new_f1[w,f,m,n-m],m,0,n),
+  hori_new_f2[w,f,n] :> block([res:hori_new_f[w,f,n]],
+    res:ev(res,infeval),
+    define_hamvf(concat('new,'_,f,'_,w,'_,n),rat(apply1(res,coerce2hamiltonian)),get(f,'coordinates),get(f,'poisson_structure)))
+  );
+hori_new_f1(w,f,k,n) :> hori_new_f1[w,f,k,n];
+hori_new_f12(w,f,k,n) :> hori_new_f12[w,f,k,n];
+hori_new_f(w,f,n) :> hori_new_f[w,f,n];
+hori_new_f2(w,f,n) :> hori_new_f2[w,f,n];
+hori_new_f3(w,f,k,n) :> hori_new_f2(w,f,k);
+reinit_hori_new_f();
+ezhnf(f,g,n,ϵ) := ezdhnf(f,g,n,ϵ,'hori_new_f3);
+
 
 /* end of bnf.mac */
