@@ -17,7 +17,9 @@ Load and run the testsuite:
 #+end_src
 
 Compute the second-order Birkhoff normal form of the hamiltonian
-\[ H=B q³/3 + (q² + p²)/2. \]
+#+begin_html
+$$ H=B q³/3 + (q² + p²)/2. $$
+#+end_html
 
 #+begin_src maxima :exports code :results none
 (%i3) declare(B,constant) $
@@ -42,7 +44,7 @@ Which gives
 
 The remaining elements in the list =%o4= are
 
-- \(I₁\), the quadratic part of \(H\);
+- $I₁$, the quadratic part of \(H\);
 - a list of parameters used to solve for the generating function \(φ\) and \(H₂\);
 - a check sum, which should be =0=;
 - \(H₂\) in mixed variables;
